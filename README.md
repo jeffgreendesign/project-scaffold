@@ -63,6 +63,7 @@ Every file in `scaffold/` with its purpose:
 | `.github/workflows/changelog-check.yml` | Enforce changelog updates on PRs |
 | `.husky/pre-commit` | Pre-commit hook running fast quality checks |
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules for TypeScript conventions |
+| `.cursor/rules/shell-scripts.mdc` | Cursor IDE rules for shell script conventions and linting |
 | `scripts/security-check.sh` | Pre-commit security scanner (path traversal, secrets, eval) |
 | `scripts/doc-sync-check.sh` | Documentation drift detection |
 | `config/biome.json` | Biome linter + formatter config (strict, tabs, single quotes) |

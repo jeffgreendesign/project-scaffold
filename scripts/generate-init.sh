@@ -210,7 +210,7 @@ echo "  5. Run: $PM_RUN gates (verify everything passes)"
 echo ""
 echo "Optional:"
 echo "  - Edit NOW.md if project will last > 2 weeks"
-echo "  - Edit AGENTS.md if project exposes an API"
+echo "  - Edit AGENTS.md for Codex/GPT execution guidance"
 echo "  - Delete files you don't need (see docs/DECISION-TREES.md)"
 FOOTER
 
