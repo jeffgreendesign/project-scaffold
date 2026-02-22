@@ -37,7 +37,7 @@ npx markdownlint-cli2 "**/*.md"
 - README.md must list every scaffold file with its purpose
 - Template files use [brackets] for placeholder values
 - Non-template files (settings.json, CI workflows) should work with minimal changes
-- The canonical gate command is `gates`. Never use `quality`, `check`, or `claude:gates` anywhere.
+- The canonical gate command is `gates`. Never use `quality`, `validate`, `check`, or `claude:gates` anywhere.
 - After changing any scaffold/ file, regenerate init.sh with `./scripts/generate-init.sh`
 - All shell scripts must pass `bash -n <file>` syntax check before committing
 - After changing generate-init.sh, regenerate init.sh and verify with `bash -n scripts/init.sh`
