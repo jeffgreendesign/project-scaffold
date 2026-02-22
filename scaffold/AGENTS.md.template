@@ -1,0 +1,36 @@
+# AGENTS.md
+
+<!-- CUSTOMIZE: Only create this file if your project exposes an API, SDK, or tool interface. -->
+<!-- This tells external AI agents how to USE your project (vs. CLAUDE.md which tells agents how to DEVELOP it). -->
+
+## Quick Reference
+
+| Aspect  | Value                          |
+|---------|--------------------------------|
+| API     | [REST / GraphQL / MCP], base URL [/api/v1] |
+| Auth    | [Bearer token / API key / none] |
+| Limits  | [Rate limits]                  |
+
+## Endpoint Selection Guide
+
+| User Intent          | Endpoint        | Key Params          |
+|----------------------|-----------------|---------------------|
+| [Intent 1]           | [METHOD /path]  | [params]            |
+| [Intent 2]           | [METHOD /path]  | [params]            |
+
+## Common Workflows
+
+<!-- Show 2-3 typical multi-step workflows an agent would perform -->
+
+### [Workflow Name]
+
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+## Error Handling
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| 401   | [cause] | [fix] |
+| 429   | [cause] | [fix] |

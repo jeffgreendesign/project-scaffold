@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+# Quality gates — must pass before commit
+# For full test suite, rely on CI. Pre-commit runs fast checks only.
+
+# Detect package manager
+if [ -f pnpm-lock.yaml ]; then
+  PM_RUN="pnpm"
+elif [ -f yarn.lock ]; then
+  PM_RUN="yarn"
+else
+  PM_RUN="npm run"
+fi
+
+$PM_RUN lint
+$PM_RUN typecheck

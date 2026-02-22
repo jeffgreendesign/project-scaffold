@@ -1,0 +1,31 @@
+# What's Happening Now
+
+<!-- This file prevents context loss between sessions. -->
+<!-- Update it at the end of every work session. -->
+<!-- Keep it under 100 lines. If it's longer, you're not updating often enough. -->
+
+**Last Updated:** [YYYY-MM-DD]
+**Project Status:** [Brief status — e.g., "MVP in progress", "95% complete"]
+
+## Current Sprint
+
+- [ ] [Active task 1]
+- [ ] [Active task 2]
+
+## Recently Completed
+
+- [x] [Completed item] ([date])
+
+## Blocked / Waiting
+
+- [Item] — blocked on [reason]
+
+## Next Actions
+
+**High Priority:**
+
+- [Task A]
+
+**Low Priority:**
+
+- [Task B]

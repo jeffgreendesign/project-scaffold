@@ -1,0 +1,225 @@
+# CLAUDE.md
+
+<!-- CUSTOMIZE: Replace everything in [brackets] with your project values -->
+
+## Project Overview
+
+[One paragraph: what this project does, who it's for, what problem it solves.]
+
+## Quick Reference
+
+| Aspect          | Value                          |
+|-----------------|--------------------------------|
+| Package manager | [pnpm / npm / yarn]            |
+| Runtime         | [Node.js >= 22 / Python >= 3.12] |
+| Language        | [TypeScript (ESM) / Python]    |
+| Framework       | [Next.js 16 / FastAPI / etc.]  |
+| Lint            | `[pnpm lint]`                  |
+| Test            | `[pnpm test]`                  |
+| Type check      | `[pnpm typecheck]`            |
+| Build           | `[pnpm build]`                 |
+| **All checks**  | **`[pnpm gates]`**             |
+| Node targets    | [>= 22 / >= 20 / >= 18]       |
+| TS target       | [ESNext / ES2022 / etc.]       |
+
+<!-- CUSTOMIZE: The compatibility matrix (Node targets, TS target) matters. -->
+<!-- Agents will "modernize" syntax and silently drop support for older runtimes -->
+<!-- if you don't explicitly state what you support. -->
+
+## Development Commands
+
+<!-- CUSTOMIZE: Every command the LLM might need, copy-paste ready -->
+<!-- Group by purpose: dev, quality, testing, build -->
+
+```bash
+# Development
+[pnpm dev]
+
+# Quality gates (run before every commit)
+[pnpm gates]
+
+# Individual checks
+[pnpm lint]
+[pnpm typecheck]
+[pnpm test]
+[pnpm build]
+```
+
+## Architecture
+
+### Key Systems
+
+<!-- CUSTOMIZE: Each major subsystem gets a paragraph -->
+
+<!-- Include: what it does, where it lives, how pieces connect -->
+
+### Directory Map
+
+<!-- CUSTOMIZE: Run `tree -L 2 src/` and annotate -->
+
+```text
+src/
+├── [folder]/     # [purpose]
+├── [folder]/     # [purpose]
+└── [folder]/     # [purpose]
+```
+
+### Starting Points
+
+<!-- CUSTOMIZE: List the 3-5 files/folders where most tasks begin. -->
+
+<!-- This prevents the agent from exploring the wrong part of the repo. -->
+
+<!-- Critical for repos with multiple top-level directories (app/, website/, docs/, etc.) -->
+
+Most tasks start in `src/`. Key entry points:
+
+|Task                |Start Here      |Why                      |
+|--------------------|----------------|-------------------------|
+|[Most common task]  |`[path/to/file]`|[What this file controls]|
+|[Second most common]|`[path/to/file]`|[What this file controls]|
+|[Third most common] |`[path/to/file]`|[What this file controls]|
+
+## Code Conventions
+
+<!-- CUSTOMIZE: The rules LLMs violate most often in YOUR project -->
+
+<!-- Use the Rule-Bug-Prevention format for each: -->
+
+### [Convention Category]
+
+**Rule:** [What to do]
+**Bug it prevents:** [What goes wrong without this rule]
+
+```[lang]
+# WRONG
+[bad pattern]
+
+# CORRECT
+[good pattern]
+```
+
+## Common Mistakes
+
+<!-- CUSTOMIZE: Group by severity -->
+
+### Build Breakers
+
+These will fail the build:
+
+- [Mistake 1]
+- [Mistake 2]
+
+### Silent Bugs
+
+These won't fail the build but cause problems:
+
+- [Mistake 1]
+- [Mistake 2]
+
+## How to Add New [Things]
+
+<!-- CUSTOMIZE: Step-by-step recipes for every common creation task -->
+
+<!-- "Create file at X, add Y, run Z." No ambiguity. -->
+
+### New [Component/Route/Endpoint]
+
+1. Create `[path/to/new-thing]`
+2. Add required fields: [list]
+3. Follow this pattern:
+
+   ```[lang]
+   [minimal template]
+   ```
+
+4. Run `[pnpm gates]`
+
+## Architecture Decisions
+
+<!-- CUSTOMIZE: Why each major tech choice was made -->
+
+<!-- "Do not suggest alternatives unless explicitly asked." -->
+
+These choices are intentional. Do not suggest alternatives unless explicitly asked.
+
+- **[Tool] over [Alternative]**: [Reason]
+- **[Tool] over [Alternative]**: [Reason]
+
+## Data Integrity Rules
+
+<!-- CUSTOMIZE: Remove this section if your project doesn't handle data ingestion/sync. -->
+
+<!-- For projects that read, transform, or persist data, these rules prevent silent data loss. -->
+
+- **Never cap results with array slicing** (no `[:20]` or `.slice(0, 100)`) unless it's a deliberate, documented CLI flag. If 50 items were collected, all 50 must be saved.
+- **Per-item error handling in loops is mandatory.** A single outer try/catch means one bad item kills processing for everything after it.
+- **Log counts and error counts** for every ingestion/sync operation. "Synced 47/50 items, 3 failures" not silence.
+- **Ordering and pagination must be deterministic.** Sort by a unique column. If sorting by a non-unique column, add a tiebreaker.
+- **Never pass empty strings to database timestamp columns.** Convert to `null`/`None`.
+
+## Public API Stability
+
+<!-- CUSTOMIZE: Only include this section for libraries with external consumers. -->
+
+<!-- Remove for apps and internal tools. -->
+
+### Stable Exports (do not change without migration entry)
+
+<!-- CUSTOMIZE: List your public API surface -->
+
+- `[exportName]` — [what it does]
+- `[exportName]` — [what it does]
+
+**Rule:** Any change to a stable export requires:
+
+1. A new entry in MIGRATION.md explaining the change
+2. A semver-appropriate version bump
+3. Deprecation notice on the old API if not a major version
+
+## Debug Playbook
+
+<!-- CUSTOMIZE: The 3-5 most common failure modes and their fixes. -->
+
+<!-- Agents get stuck in retry loops when they hit failures they don't understand. -->
+
+<!-- This section breaks those loops. -->
+
+### If tests fail in CI but pass locally
+
+- [Most likely cause, e.g., "Missing env var in CI — check .github/workflows/ci.yml"]
+- [Second cause]
+
+### If the build fails
+
+- [Most likely cause, e.g., "TypeScript strict mode catches something the IDE missed — run `pnpm typecheck` locally"]
+- [Second cause]
+
+### If lint fails
+
+- [Most likely cause, e.g., "Auto-fixable — run `pnpm lint --fix`"]
+
+### If types fail
+
+- [Most likely cause, e.g., "Missing type for new dependency — check if @types/[pkg] exists"]
+
+## Environment Variables
+
+<!-- CUSTOMIZE: Every env var with description -->
+
+<!-- Mark REQUIRED vs OPTIONAL -->
+
+|Variable|Required|Purpose       |
+|--------|--------|--------------|
+|`[VAR]` |Yes     |[What it does]|
+
+## Documentation Sync Rules
+
+<!-- CUSTOMIZE: List files that must be updated together -->
+
+<!-- This is the #1 source of documentation drift -->
+
+When updating [X], also update:
+
+- [File A]
+- [File B]
