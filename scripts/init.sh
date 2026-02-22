@@ -462,6 +462,7 @@ SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML_7f3d9a
 
 write_executable '.husky/pre-commit' << 'SCAFFOLD_EOF__HUSKY_PRE-COMMIT_7f3d9a'
 #!/bin/sh
+set -e
 
 # Quality gates — must pass before commit
 # For full test suite, rely on CI. Pre-commit runs fast checks only.
