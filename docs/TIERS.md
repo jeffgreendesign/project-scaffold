@@ -9,7 +9,7 @@ Adopt the scaffold incrementally. Each tier builds on the previous one. Start at
 | 0 | 15 min | CLAUDE.md, settings.json, .env.example, `gates` script | LLM can work autonomously |
 | 1 | 1 hr | linter, strict types, hooks, CI, .node-version | Mistakes caught before repo |
 | 2 | 2-3 hrs | NOW.md, commands, guardrail tests, changelog, frontmatter, API stability (libraries), workspace boundaries (monorepos) | Sustained multi-session quality |
-| 3 | optional | llms.txt, AGENTS.md, MCP, Cursor rules, decision trees | External agent discoverability |
+| 3 | optional | llms.txt, AGENTS.md, MCP, Cursor rules, decision trees | Multi-agent discoverability and DX |
 
 ---
 
@@ -150,7 +150,7 @@ Tier 2 is about sustained quality across multiple sessions. NOW.md prevents cont
 | File | Purpose |
 |------|---------|
 | `llms.txt` | AI-readable project summary for external agents |
-| `AGENTS.md` | Integration guide for agents using your API |
+| `AGENTS.md` | Codex/GPT agent instructions (+ optional external API guide) |
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules for TypeScript conventions |
 | Decision trees in docs | Flowcharts for common architectural choices |
 
@@ -166,7 +166,7 @@ Tier 3 is for projects that are consumed by external agents or used in multi-age
 
 ### When to Implement
 
-- Project exposes a public API → create AGENTS.md
+- Always create AGENTS.md for Codex/GPT execution guidance
 - Project is an open-source library → create llms.txt
 - Team uses Cursor → create .cursor/rules/
 - Architecture choices aren't obvious → create decision trees

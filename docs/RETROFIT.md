@@ -30,7 +30,7 @@ Run through this checklist to identify what your project is missing:
 | Compatibility matrix in CLAUDE.md (libraries) | ☐ | Medium |
 | Workspace boundary tests (monorepos) | ☐ | Medium |
 | llms.txt | ☐ | Low |
-| AGENTS.md (if project has API) | ☐ | Low |
+| AGENTS.md (Codex/GPT operating instructions) | ☐ | Low |
 | Cursor rules | ☐ | Low |
 
 ---
@@ -157,13 +157,13 @@ Copy `scaffold/.cursor/rules/typescript.mdc` and customize:
 - Update the glob patterns for your file structure
 - Add project-specific rules for common mistakes
 
-### 2. Create AGENTS.md (if project has API)
+### 2. Create AGENTS.md (for Codex/GPT compatibility)
 
-Only create this if your project exposes an API. Copy `scaffold/AGENTS.md.template` and fill in:
-- API type and base URL
-- Authentication method
-- Endpoint selection guide
-- Common workflows
+Create this for all projects so Codex/GPT agents have explicit working rules. Copy `scaffold/AGENTS.md.template` and fill in:
+- Scope + project snapshot
+- First commands and working rules
+- PR/commit requirements
+- API section only if the project exposes an external interface
 
 ### 3. Create llms.txt
 

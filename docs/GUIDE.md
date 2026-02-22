@@ -674,23 +674,23 @@ describe('Component smoke tests', () => {
 
 **Location:** `scaffold/AGENTS.md.template`
 
-**What it does:** Tells external AI agents how to USE your project (vs. CLAUDE.md, which tells agents how to DEVELOP it). Documents API endpoints, auth, rate limits, common workflows, and error handling.
+**What it does:** Provides execution guidance for Codex/GPT-style agents (scope, startup commands, repo rules, and PR expectations), with an optional API section for external consumers.
 
-**Why it exists:** If your project exposes an API, SDK, or tool interface, external agents need to know how to call it. AGENTS.md is the machine-readable API guide — structured for LLM consumption, not human browsing.
+**Why it exists:** Codex-compatible environments prioritize `AGENTS.md` for operating instructions. A strong default improves agent reliability and developer experience from the first turn. Keep the external API section only when needed.
 
-**Bug it prevents:** External agents calling deprecated endpoints. Agents not handling rate limits. Agents using wrong auth method. Agents not knowing about required parameters.
+**Bug it prevents:** Agents running the wrong commands, missing repo constraints, and producing low-signal PRs without validation context.
 
 **How to customize:**
 
-- Only create this file if your project exposes an API, SDK, or tool interface
-- Delete it for internal apps with no external consumers
-- Keep the table format — agents parse tables better than prose
+- Always create this file for Codex/GPT agent compatibility
+- Keep the top sections concise, executable, and repo-specific
+- Keep the API tables only if your project exposes an external API/SDK/tool interface
 
 **Common mistakes:**
 
-- Creating it for projects that don't expose an API (unnecessary maintenance burden)
-- Not updating it when endpoints change (same drift problem as any doc)
-- Duplicating CLAUDE.md content (AGENTS.md is for consumers, CLAUDE.md is for developers)
+- Leaving it generic (agents need concrete commands and constraints)
+- Letting AGENTS.md and CLAUDE.md drift on canonical commands
+- Keeping API sections for projects that do not expose external interfaces
 
 ---
 
