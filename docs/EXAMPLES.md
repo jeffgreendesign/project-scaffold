@@ -229,7 +229,65 @@ MIGRATION.md entry and bumps the major version first.
 
 ---
 
-## 13. Before Debug Playbook: Agent Stuck in Retry Loop
+## 13. Before `/design`: Agent Builds the Wrong Thing
+
+```text
+User: "Add role-based access control to the admin endpoints"
+
+Agent: Got it! Let me implement RBAC.
+
+> Creating src/middleware/rbac.ts
+> Creating src/models/role.ts
+> Creating src/models/permission.ts
+> Modifying src/routes/admin.ts
+> Creating src/routes/admin/roles.ts
+> Creating src/routes/admin/permissions.ts
+> Creating tests/rbac.test.ts
+> Modifying src/lib/db.ts — adding roles table
+
+User: "Stop. We already have a roles system in src/auth/roles.ts.
+       I wanted you to USE that, not build a new one.
+       Also, we use Drizzle for migrations, not raw SQL in db.ts."
+
+# 20 minutes wasted. Full revert. Start over.
+```
+
+## 14. After `/design`: Correct on First Implementation
+
+```text
+User: /design add role-based access control to the admin endpoints
+
+Agent: [researches codebase thoroughly]
+
+**Understanding:** Add RBAC to admin endpoints using the existing roles system.
+
+**Reference implementations:**
+| Creating | Follow the pattern in | Key things to match |
+|----------|----------------------|---------------------|
+| Admin middleware | `src/auth/middleware.ts` | Token validation pattern, error responses |
+| Role checks | `src/auth/roles.ts` | Existing role definitions and permission checks |
+| Migration | `drizzle/migrations/003_*.ts` | Drizzle migration format, rollback support |
+
+**Files to change:**
+| File | Change | Why |
+|------|--------|-----|
+| src/auth/roles.ts | Add ADMIN_READ, ADMIN_WRITE permissions | Extend existing role system |
+| src/middleware/requireRole.ts | Create role-checking middleware | Reusable across admin routes |
+| src/routes/admin.ts | Add requireRole() to route handlers | Enforce permissions |
+| drizzle/migrations/004_admin_roles.ts | Add admin permissions to roles table | Schema change via Drizzle |
+
+**Do NOT implement yet. Waiting for approval.**
+
+User: "Looks right. But use a single ADMIN permission instead of
+       READ/WRITE split — we can granularize later. Implement it."
+
+# Agent implements the corrected plan. One round of review
+# caught the over-engineering. No wasted implementation.
+```
+
+---
+
+## 15. Before Debug Playbook: Agent Stuck in Retry Loop
 
 ```text
 $ npm run build
@@ -246,7 +304,7 @@ $ npm run build    ← same error
 # Eventually gives up or makes the wrong fix (adds `as string`).
 ```
 
-## 14. After Debug Playbook: One-Step Resolution
+## 16. After Debug Playbook: One-Step Resolution
 
 ```markdown
 # CLAUDE.md — Debug Playbook

@@ -58,6 +58,7 @@ Every file in `scaffold/` with its purpose:
 | `.claude/settings.json` | Pre-approved safe commands, blocked destructive operations |
 | `.claude/commands/gates.md` | Slash command: run all quality gates |
 | `.claude/commands/new-component.md` | Slash command: create component following conventions |
+| `.claude/commands/design.md` | Slash command: research codebase and propose plan before implementing |
 | `.claude/hooks/session-start.sh` | Auto-install dependencies on session start |
 | `.github/workflows/ci.yml` | CI pipeline: lint, typecheck, test, build via `gates` |
 | `.github/workflows/changelog-check.yml` | Enforce changelog updates on PRs |
