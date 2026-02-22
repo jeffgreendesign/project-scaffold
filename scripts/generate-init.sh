@@ -116,7 +116,7 @@ find "$SCAFFOLD_DIR" -type f | sort | while read -r filepath; do
   esac
 
   # Use a unique delimiter for heredoc to avoid conflicts
-  delimiter="SCAFFOLD_EOF_$(echo "$relpath" | tr '/.' '__' | tr '[:lower:]' '[:upper:]')"
+  delimiter="SCAFFOLD_EOF_$(echo "$relpath" | tr '/.' '__' | tr '[:lower:]' '[:upper:]')_7f3d9a"
 
   if [ "$is_executable" = true ]; then
     echo "write_executable '$outpath' << '$delimiter'" >> "$OUTPUT"
@@ -182,8 +182,13 @@ case "$PKG_MANAGER" in
     ;;
   yarn)
     PM_INSTALL="yarn add --dev"
-    PM_EXEC="yarn dlx"
     PM_RUN="yarn"
+    # yarn dlx only exists in Yarn v2+ (Berry); Yarn v1 (Classic) needs npx
+    if yarn --version 2>/dev/null | grep -q '^1\.'; then
+      PM_EXEC="npx"
+    else
+      PM_EXEC="yarn dlx"
+    fi
     ;;
   *)
     PM_INSTALL="npm install --save-dev"

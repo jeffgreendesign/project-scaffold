@@ -39,6 +39,11 @@ npx markdownlint-cli2 "**/*.md"
 - Non-template files (settings.json, CI workflows) should work with minimal changes
 - The canonical gate command is `gates`. Never use `quality`, `validate`, or `claude:gates` anywhere.
 - After changing any scaffold/ file, regenerate init.sh with `./scripts/generate-init.sh`
+- All shell scripts must pass `bash -n <file>` syntax check before committing
+- After changing generate-init.sh, regenerate init.sh and verify with `bash -n scripts/init.sh`
+- Package-manager code must handle npm, pnpm, and yarn (including Yarn v1 vs v2+ for `dlx`)
+- Never hardcode `npm`/`npx`/`pnpm`/`yarn` in user-facing output — use detection variables (PKG_MANAGER, PM_RUN, PM_INSTALL, PM_EXEC)
+- Quote all `case` patterns containing `#` or `*` to prevent shell parsing issues (e.g., `"#"*` not `#*`)
 
 ## Permissions
 

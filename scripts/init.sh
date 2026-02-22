@@ -71,7 +71,7 @@ write_executable() {
   chmod +x "$TARGET_DIR/$1"
 }
 
-write_file '.claude/commands/new-component.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD'
+write_file '.claude/commands/new-component.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD_7f3d9a'
 Create a new component following project conventions:
 
 ## Instructions
@@ -89,9 +89,9 @@ Create a new component following project conventions:
 
 1. Run `npm run gates`
 
-SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD
+SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD_7f3d9a
 
-write_file '.claude/commands/validate.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD'
+write_file '.claude/commands/validate.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD_7f3d9a'
 Run all quality gates on the codebase:
 
 1. Run `npm run gates`
@@ -99,9 +99,9 @@ Run all quality gates on the codebase:
 3. If any gate fails, identify the specific errors
 4. Do NOT proceed with committing until all gates pass
 
-SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD
+SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD_7f3d9a
 
-write_executable '.claude/hooks/session-start.sh' << 'SCAFFOLD_EOF__CLAUDE_HOOKS_SESSION-START_SH'
+write_executable '.claude/hooks/session-start.sh' << 'SCAFFOLD_EOF__CLAUDE_HOOKS_SESSION-START_SH_7f3d9a'
 #!/bin/bash
 set -euo pipefail
 
@@ -143,9 +143,9 @@ fi
 
 echo "--- Session start complete ---"
 
-SCAFFOLD_EOF__CLAUDE_HOOKS_SESSION-START_SH
+SCAFFOLD_EOF__CLAUDE_HOOKS_SESSION-START_SH_7f3d9a
 
-write_file '.claude/settings.json' << 'SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON'
+write_file '.claude/settings.json' << 'SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON_7f3d9a'
 {
   "permissions": {
     "allow": [
@@ -196,9 +196,41 @@ write_file '.claude/settings.json' << 'SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON'
   }
 }
 
-SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON
+SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON_7f3d9a
 
-write_file '.cursor/rules/typescript.mdc' << 'SCAFFOLD_EOF__CURSOR_RULES_TYPESCRIPT_MDC'
+write_file '.cursor/rules/shell-scripts.mdc' << 'SCAFFOLD_EOF__CURSOR_RULES_SHELL-SCRIPTS_MDC_7f3d9a'
+---
+description: Shell script conventions and common pitfalls
+globs: ["**/*.sh"]
+---
+
+# Shell Script Rules
+
+## Critical Rules
+
+- Always start with `set -euo pipefail`
+- Quote all `case` patterns containing `#` or `*` — unquoted `#*` is parsed as a comment
+  - WRONG: `case "$VAR" in //*|#*|\**) ;; esac`
+  - RIGHT: `case "$VAR" in "//"*|"#"*|"*"*) ;; esac`
+- Verify syntax with `bash -n <file>` before committing
+
+## Package Manager Handling
+
+- Never hardcode `npm`, `npx`, `pnpm`, or `yarn` in user-facing output
+- Use detection variables: `PKG_MANAGER`, `PM_RUN`, `PM_INSTALL`, `PM_EXEC`
+- Handle Yarn v1 (Classic) vs v2+ (Berry) — `yarn dlx` does not exist in v1
+- When detecting yarn version: `yarn --version 2>/dev/null | grep -q '^1\.'`
+
+## Common Mistakes
+
+- Using `read -r` without `/dev/tty` in scripts that may run via `curl | bash`
+- Using `find | while read` instead of `find -print0 | while IFS= read -r -d ''`
+- Suppressing stderr with `2>/dev/null` on commands that should surface errors
+- Using `pip` directly instead of `python -m pip` when virtualenv may not be active
+
+SCAFFOLD_EOF__CURSOR_RULES_SHELL-SCRIPTS_MDC_7f3d9a
+
+write_file '.cursor/rules/typescript.mdc' << 'SCAFFOLD_EOF__CURSOR_RULES_TYPESCRIPT_MDC_7f3d9a'
 ---
 description: TypeScript conventions and import patterns
 globs: ["src/**/*.ts", "src/**/*.tsx"]
@@ -224,9 +256,9 @@ globs: ["src/**/*.ts", "src/**/*.tsx"]
 - Using `console.log()` instead of the project logger
 - String interpolation in SQL queries (use parameterized queries)
 
-SCAFFOLD_EOF__CURSOR_RULES_TYPESCRIPT_MDC
+SCAFFOLD_EOF__CURSOR_RULES_TYPESCRIPT_MDC_7f3d9a
 
-write_file '.env.example' << 'SCAFFOLD_EOF__ENV_EXAMPLE'
+write_file '.env.example' << 'SCAFFOLD_EOF__ENV_EXAMPLE_7f3d9a'
 # =============================================================================
 # Environment Variables
 # =============================================================================
@@ -251,9 +283,9 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
 # Feature Flags (OPTIONAL)
 # ENABLE_DEBUG=false
 
-SCAFFOLD_EOF__ENV_EXAMPLE
+SCAFFOLD_EOF__ENV_EXAMPLE_7f3d9a
 
-write_file '.github/workflows/changelog-check.yml' << 'SCAFFOLD_EOF__GITHUB_WORKFLOWS_CHANGELOG-CHECK_YML'
+write_file '.github/workflows/changelog-check.yml' << 'SCAFFOLD_EOF__GITHUB_WORKFLOWS_CHANGELOG-CHECK_YML_7f3d9a'
 # Changelog Enforcement
 # ============================================================================
 # Ensures every PR that changes code also updates CHANGELOG.md.
@@ -314,9 +346,9 @@ jobs:
           echo "  Add the 'skip-changelog' label to this PR."
           exit 1
 
-SCAFFOLD_EOF__GITHUB_WORKFLOWS_CHANGELOG-CHECK_YML
+SCAFFOLD_EOF__GITHUB_WORKFLOWS_CHANGELOG-CHECK_YML_7f3d9a
 
-write_file '.github/workflows/ci.yml' << 'SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML'
+write_file '.github/workflows/ci.yml' << 'SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML_7f3d9a'
 # CI Pipeline
 # ============================================================================
 # Runs quality gates on every push to main and on pull requests targeting main.
@@ -421,9 +453,9 @@ jobs:
       - name: Run quality gates
         run: ${{ steps.pkg-manager.outputs.manager }} run gates
 
-SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML
+SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML_7f3d9a
 
-write_executable '.husky/pre-commit' << 'SCAFFOLD_EOF__HUSKY_PRE-COMMIT'
+write_executable '.husky/pre-commit' << 'SCAFFOLD_EOF__HUSKY_PRE-COMMIT_7f3d9a'
 #!/bin/sh
 
 # Quality gates — must pass before commit
@@ -431,9 +463,9 @@ write_executable '.husky/pre-commit' << 'SCAFFOLD_EOF__HUSKY_PRE-COMMIT'
 npm run lint
 npm run typecheck
 
-SCAFFOLD_EOF__HUSKY_PRE-COMMIT
+SCAFFOLD_EOF__HUSKY_PRE-COMMIT_7f3d9a
 
-write_file 'AGENTS.md' << 'SCAFFOLD_EOF_AGENTS_MD_TEMPLATE'
+write_file 'AGENTS.md' << 'SCAFFOLD_EOF_AGENTS_MD_TEMPLATE_7f3d9a'
 # AGENTS.md
 
 <!-- CUSTOMIZE: Only create this file if your project exposes an API, SDK, or tool interface. -->
@@ -471,9 +503,9 @@ write_file 'AGENTS.md' << 'SCAFFOLD_EOF_AGENTS_MD_TEMPLATE'
 | 401   | [cause] | [fix] |
 | 429   | [cause] | [fix] |
 
-SCAFFOLD_EOF_AGENTS_MD_TEMPLATE
+SCAFFOLD_EOF_AGENTS_MD_TEMPLATE_7f3d9a
 
-write_file 'CHANGELOG.md' << 'SCAFFOLD_EOF_CHANGELOG_MD'
+write_file 'CHANGELOG.md' << 'SCAFFOLD_EOF_CHANGELOG_MD_7f3d9a'
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -489,9 +521,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/)
 <!-- CUSTOMIZE: Replace [your-org/your-repo] with your GitHub repository path -->
 [Unreleased]: https://github.com/[your-org/your-repo]/compare/v0.0.0...HEAD
 
-SCAFFOLD_EOF_CHANGELOG_MD
+SCAFFOLD_EOF_CHANGELOG_MD_7f3d9a
 
-write_file 'CLAUDE.md' << 'SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE'
+write_file 'CLAUDE.md' << 'SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE_7f3d9a'
 # CLAUDE.md
 
 <!-- CUSTOMIZE: Replace everything in [brackets] with your project values -->
@@ -718,9 +750,9 @@ When updating [X], also update:
 - [File A]
 - [File B]
 
-SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE
+SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE_7f3d9a
 
-write_file 'NOW.md' << 'SCAFFOLD_EOF_NOW_MD_TEMPLATE'
+write_file 'NOW.md' << 'SCAFFOLD_EOF_NOW_MD_TEMPLATE_7f3d9a'
 # What's Happening Now
 
 <!-- This file prevents context loss between sessions. -->
@@ -753,14 +785,14 @@ write_file 'NOW.md' << 'SCAFFOLD_EOF_NOW_MD_TEMPLATE'
 
 - [Task B]
 
-SCAFFOLD_EOF_NOW_MD_TEMPLATE
+SCAFFOLD_EOF_NOW_MD_TEMPLATE_7f3d9a
 
-write_file 'config/.node-version' << 'SCAFFOLD_EOF_CONFIG__NODE-VERSION'
+write_file 'config/.node-version' << 'SCAFFOLD_EOF_CONFIG__NODE-VERSION_7f3d9a'
 22
 
-SCAFFOLD_EOF_CONFIG__NODE-VERSION
+SCAFFOLD_EOF_CONFIG__NODE-VERSION_7f3d9a
 
-write_file 'config/biome.json' << 'SCAFFOLD_EOF_CONFIG_BIOME_JSON'
+write_file 'config/biome.json' << 'SCAFFOLD_EOF_CONFIG_BIOME_JSON_7f3d9a'
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "organizeImports": {
@@ -825,9 +857,9 @@ write_file 'config/biome.json' << 'SCAFFOLD_EOF_CONFIG_BIOME_JSON'
   }
 }
 
-SCAFFOLD_EOF_CONFIG_BIOME_JSON
+SCAFFOLD_EOF_CONFIG_BIOME_JSON_7f3d9a
 
-write_file 'config/tsconfig.json' << 'SCAFFOLD_EOF_CONFIG_TSCONFIG_JSON'
+write_file 'config/tsconfig.json' << 'SCAFFOLD_EOF_CONFIG_TSCONFIG_JSON_7f3d9a'
 {
   "compilerOptions": {
     "strict": true,
@@ -846,9 +878,9 @@ write_file 'config/tsconfig.json' << 'SCAFFOLD_EOF_CONFIG_TSCONFIG_JSON'
   }
 }
 
-SCAFFOLD_EOF_CONFIG_TSCONFIG_JSON
+SCAFFOLD_EOF_CONFIG_TSCONFIG_JSON_7f3d9a
 
-write_file 'config/tsconfig.python-equiv.md' << 'SCAFFOLD_EOF_CONFIG_TSCONFIG_PYTHON-EQUIV_MD'
+write_file 'config/tsconfig.python-equiv.md' << 'SCAFFOLD_EOF_CONFIG_TSCONFIG_PYTHON-EQUIV_MD_7f3d9a'
 # Python Equivalents for TypeScript Config
 
 <!-- This file maps the TypeScript tooling choices in this scaffold to their
@@ -997,9 +1029,9 @@ Use with pyenv or mise to ensure consistent Python versions.
 | ESM imports                 | Standard Python imports     |
 | `@types/*` packages         | Type stubs (`*-stubs`)      |
 
-SCAFFOLD_EOF_CONFIG_TSCONFIG_PYTHON-EQUIV_MD
+SCAFFOLD_EOF_CONFIG_TSCONFIG_PYTHON-EQUIV_MD_7f3d9a
 
-write_file 'llms.txt' << 'SCAFFOLD_EOF_LLMS_TXT_TEMPLATE'
+write_file 'llms.txt' << 'SCAFFOLD_EOF_LLMS_TXT_TEMPLATE_7f3d9a'
 # [Project Name]
 
 > [One-line description]
@@ -1021,9 +1053,9 @@ write_file 'llms.txt' << 'SCAFFOLD_EOF_LLMS_TXT_TEMPLATE'
 - [Key fact 1]
 - [Key fact 2]
 
-SCAFFOLD_EOF_LLMS_TXT_TEMPLATE
+SCAFFOLD_EOF_LLMS_TXT_TEMPLATE_7f3d9a
 
-write_executable 'scripts/doc-sync-check.sh' << 'SCAFFOLD_EOF_SCRIPTS_DOC-SYNC-CHECK_SH'
+write_executable 'scripts/doc-sync-check.sh' << 'SCAFFOLD_EOF_SCRIPTS_DOC-SYNC-CHECK_SH_7f3d9a'
 #!/bin/bash
 # ============================================================================
 # Documentation Sync Check — Detects Documentation Drift
@@ -1189,9 +1221,9 @@ if [ "$FIX_MODE" = false ]; then
 fi
 exit 1
 
-SCAFFOLD_EOF_SCRIPTS_DOC-SYNC-CHECK_SH
+SCAFFOLD_EOF_SCRIPTS_DOC-SYNC-CHECK_SH_7f3d9a
 
-write_executable 'scripts/security-check.sh' << 'SCAFFOLD_EOF_SCRIPTS_SECURITY-CHECK_SH'
+write_executable 'scripts/security-check.sh' << 'SCAFFOLD_EOF_SCRIPTS_SECURITY-CHECK_SH_7f3d9a'
 #!/bin/bash
 # ============================================================================
 # Security Check — Pre-commit Security Scanner
@@ -1328,9 +1360,9 @@ fi
 echo "Run with --strict to treat warnings as errors."
 exit 0
 
-SCAFFOLD_EOF_SCRIPTS_SECURITY-CHECK_SH
+SCAFFOLD_EOF_SCRIPTS_SECURITY-CHECK_SH_7f3d9a
 
-write_file 'tests/smoke.test.tsx' << 'SCAFFOLD_EOF_TESTS_SMOKE_TEST_TSX'
+write_file 'tests/smoke.test.tsx' << 'SCAFFOLD_EOF_TESTS_SMOKE_TEST_TSX_7f3d9a'
 import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 
@@ -1349,9 +1381,9 @@ describe('Component smoke tests', () => {
   });
 });
 
-SCAFFOLD_EOF_TESTS_SMOKE_TEST_TSX
+SCAFFOLD_EOF_TESTS_SMOKE_TEST_TSX_7f3d9a
 
-write_file 'tests/test_architecture.py' << 'SCAFFOLD_EOF_TESTS_TEST_ARCHITECTURE_PY'
+write_file 'tests/test_architecture.py' << 'SCAFFOLD_EOF_TESTS_TEST_ARCHITECTURE_PY_7f3d9a'
 """
 Architecture Guardrail Test — Python
 ============================================================================
@@ -1660,9 +1692,9 @@ def _get_enclosing_function(filepath: str, line_number: int) -> str | None:
 if __name__ == "__main__":
     unittest.main()
 
-SCAFFOLD_EOF_TESTS_TEST_ARCHITECTURE_PY
+SCAFFOLD_EOF_TESTS_TEST_ARCHITECTURE_PY_7f3d9a
 
-write_file 'tests/test_architecture.ts' << 'SCAFFOLD_EOF_TESTS_TEST_ARCHITECTURE_TS'
+write_file 'tests/test_architecture.ts' << 'SCAFFOLD_EOF_TESTS_TEST_ARCHITECTURE_TS_7f3d9a'
 /**
  * Architecture Guardrail Test — Import Boundary Enforcement
  * ============================================================================
@@ -1846,9 +1878,9 @@ describe('Architecture: Import boundaries', () => {
   });
 });
 
-SCAFFOLD_EOF_TESTS_TEST_ARCHITECTURE_TS
+SCAFFOLD_EOF_TESTS_TEST_ARCHITECTURE_TS_7f3d9a
 
-write_file 'tests/test_workspace_boundaries.ts' << 'SCAFFOLD_EOF_TESTS_TEST_WORKSPACE_BOUNDARIES_TS'
+write_file 'tests/test_workspace_boundaries.ts' << 'SCAFFOLD_EOF_TESTS_TEST_WORKSPACE_BOUNDARIES_TS_7f3d9a'
 /**
  * Workspace Boundary Guardrail Test — Monorepo Import Enforcement
  * ============================================================================
@@ -2100,7 +2132,7 @@ describe('Workspace boundaries: cross-package imports', () => {
   });
 });
 
-SCAFFOLD_EOF_TESTS_TEST_WORKSPACE_BOUNDARIES_TS
+SCAFFOLD_EOF_TESTS_TEST_WORKSPACE_BOUNDARIES_TS_7f3d9a
 
 
 # Set up the gates script in package.json
@@ -2152,8 +2184,13 @@ case "$PKG_MANAGER" in
     ;;
   yarn)
     PM_INSTALL="yarn add --dev"
-    PM_EXEC="yarn dlx"
     PM_RUN="yarn"
+    # yarn dlx only exists in Yarn v2+ (Berry); Yarn v1 (Classic) needs npx
+    if yarn --version 2>/dev/null | grep -q '^1\.'; then
+      PM_EXEC="npx"
+    else
+      PM_EXEC="yarn dlx"
+    fi
     ;;
   *)
     PM_INSTALL="npm install --save-dev"

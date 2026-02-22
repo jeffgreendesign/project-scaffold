@@ -61,7 +61,9 @@ fi
 if [ -f "$TARGET_DIR/pnpm-lock.yaml" ]; then
   PM_INSTALL="pnpm add -D"; PM_EXEC="pnpm dlx"; PM_RUN="pnpm"
 elif [ -f "$TARGET_DIR/yarn.lock" ]; then
-  PM_INSTALL="yarn add --dev"; PM_EXEC="yarn dlx"; PM_RUN="yarn"
+  PM_INSTALL="yarn add --dev"; PM_RUN="yarn"
+  # yarn dlx only exists in Yarn v2+ (Berry); Yarn v1 (Classic) needs npx
+  if yarn --version 2>/dev/null | grep -q '^1\.'; then PM_EXEC="npx"; else PM_EXEC="yarn dlx"; fi
 else
   PM_INSTALL="npm install --save-dev"; PM_EXEC="npx"; PM_RUN="npm run"
 fi
