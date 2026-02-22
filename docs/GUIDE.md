@@ -383,7 +383,7 @@ npm run typecheck
 | `noUncheckedIndexedAccess` | `arr[0]` is `T \| undefined`, not `T` — prevents index-out-of-bounds |
 | `noUnusedLocals` | Catches dead variables |
 | `noUnusedParameters` | Catches dead parameters |
-| `moduleResolution: "bundler"` | Modern resolution for bundler-based projects |
+| `moduleResolution: "bundler"` | Modern resolution for bundler-based projects (Next.js, Vite). Use `"nodenext"` for pure Node.js libraries. |
 | `isolatedModules` | Required for SWC/esbuild transpilers |
 
 **How to customize:**
@@ -413,7 +413,7 @@ npm run typecheck
 
 **How to customize:**
 
-- Change `22` to the exact version your project requires
+- Change `22` to the exact version your project requires. Node 22 is Active LTS until 2027-04-30. Node 24 became LTS in Jan 2026 — use it for greenfield projects.
 - `.node-version` pins an exact version (e.g. `22`) — CI and developers will use that exact runtime
 - State the same version in CLAUDE.md's Quick Reference table
 
