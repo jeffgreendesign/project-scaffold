@@ -37,7 +37,23 @@ curl -sL https://raw.githubusercontent.com/jeffgreendesign/project-scaffold/main
 > bash init.sh        # run after review
 > ```
 
-### Option D: Cherry-Pick Individual Files
+### Option D: AI Agent Setup
+
+Paste this prompt into Claude Code, Codex, or Cursor:
+
+```text
+Fetch the project-scaffold template by running:
+curl -sL https://raw.githubusercontent.com/jeffgreendesign/project-scaffold/main/scripts/init.sh | bash
+
+Then customize every .template file in the project:
+1. Read the existing codebase to understand the project's stack, framework, package manager, and conventions
+2. Replace all [bracketed] placeholder values with actual project values
+3. Remove the <!-- CUSTOMIZE --> comments once each section is filled in
+4. Delete entire sections that don't apply to this project (e.g., "Data Integrity Rules" if there's no data sync, "Public API Stability" if this isn't a library)
+5. Run the project's quality gate command when done
+```
+
+### Option E: Cherry-Pick Individual Files
 
 Browse the `scaffold/` directory and copy only the files you need.
 
