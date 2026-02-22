@@ -1,0 +1,24 @@
+---
+description: TypeScript conventions and import patterns
+globs: ["src/**/*.ts", "src/**/*.tsx"]
+---
+
+# TypeScript Rules
+
+## Critical Rules
+
+- ESM imports only — use `.js` extensions even for .ts files
+- Never use `any` — use `unknown` and narrow with type guards
+- Never use non-null assertions (`!`) — handle the null case
+
+## Import Patterns
+
+- Use `@/` path aliases for project imports
+- External deps first, then internal, then relative
+- No barrel exports (`index.ts` re-exports) — import directly
+
+## Common Mistakes
+
+- Forgetting `"use client"` when using React hooks
+- Using `console.log()` instead of the project logger
+- String interpolation in SQL queries (use parameterized queries)

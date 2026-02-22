@@ -1,0 +1,103 @@
+# CI Pipeline
+# ============================================================================
+# Runs quality gates on every push to main and on pull requests targeting main.
+#
+# Design choices:
+# - Uses dorny/paths-filter to skip CI on docs-only changes (saves minutes)
+# - Reads Node version from .node-version (single source of truth for runtime)
+# - Final step runs `npm run gates` — the same command developers run locally
+#   and in pre-commit hooks. One command, everywhere, no drift.
+# - 10-minute timeout prevents hung processes from burning Actions minutes
+# ============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs for the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Determine what changed to skip unnecessary work
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            code:
+              - '**/*.ts'
+              - '**/*.tsx'
+              - '**/*.js'
+              - '**/*.jsx'
+              - '**/*.json'
+              - '**/*.yaml'
+              - '**/*.yml'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'package-lock.json'
+
+  quality:
+    needs: changes
+    # Skip quality checks if only docs changed
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Read Node version from .node-version — enforces the compatibility matrix.
+      # If you hardcode the version here, it WILL drift from .node-version.
+      - name: Read Node version
+        id: node-version
+        run: echo "version=$(cat .node-version)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+
+      # Detect and use the correct package manager
+      - name: Detect package manager
+        id: pkg-manager
+        run: |
+          if [ -f "pnpm-lock.yaml" ]; then
+            echo "manager=pnpm" >> "$GITHUB_OUTPUT"
+            echo "install=pnpm install --frozen-lockfile" >> "$GITHUB_OUTPUT"
+          elif [ -f "yarn.lock" ]; then
+            echo "manager=yarn" >> "$GITHUB_OUTPUT"
+            echo "install=yarn install --frozen-lockfile" >> "$GITHUB_OUTPUT"
+          else
+            echo "manager=npm" >> "$GITHUB_OUTPUT"
+            echo "install=npm ci" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Enable pnpm if needed (must happen before cache setup)
+      - name: Enable pnpm
+        if: steps.pkg-manager.outputs.manager == 'pnpm'
+        run: corepack enable pnpm
+
+      # Cache dependencies to speed up subsequent runs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+          cache: ${{ steps.pkg-manager.outputs.manager }}
+
+      - name: Install dependencies
+        run: ${{ steps.pkg-manager.outputs.install }}
+
+      # Run the single quality gate command.
+      # This is the same command as pre-commit hooks and local dev.
+      # CI should never run different checks than local — one command everywhere.
+      - name: Run quality gates
+        run: npm run gates

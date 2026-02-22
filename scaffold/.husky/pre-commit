@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Quality gates — must pass before commit
+# For full test suite, rely on CI. Pre-commit runs fast checks only.
+npm run lint
+npm run typecheck
