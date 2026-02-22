@@ -4,7 +4,7 @@ You are building `project-scaffold` — an opinionated starter template for new 
 
 This is NOT an “AI project starter.” It’s how the author builds all projects — the LLM-friendliness is a property of the defaults, not the identity.
 
-**Terminology rule:** The single quality gate command is called `gates`. Not `quality`, not `claude:gates`, not `validate`, not `check`. One name, every repo, no exceptions. This is the command agents run before committing. All CI, hooks, docs, and settings reference `pnpm gates` (or `npm run gates` / `python -m gates` depending on stack).
+**Terminology rule:** The single quality gate command is called `gates`. Not `quality`, not `claude:gates`, not `check`. One name, every repo, no exceptions. This is the command agents run before committing. All CI, hooks, docs, and settings reference `pnpm gates` (or `npm run gates` / `python -m gates` depending on stack).
 
 -----
 
@@ -45,7 +45,7 @@ project-scaffold/
 │   │   ├── settings.json              # Pre-approved tool permissions
 │   │   ├── commands/
 │   │   │   ├── new-component.md       # Example slash command
-│   │   │   └── validate.md            # Run all quality gates
+│   │   │   └── gates.md            # Run all quality gates
 │   │   └── hooks/
 │   │       └── session-start.sh       # Auto-setup on session start
 │   │
@@ -388,7 +388,7 @@ Add a comment block (in a sibling README or at the top of CLAUDE.md) explaining:
 - `git push` is intentionally NOT in allow — you want to review before pushing.
 - `npm install` is intentionally NOT in allow — review new dependencies.
 
-### scaffold/.claude/commands/validate.md
+### scaffold/.claude/commands/gates.md
 
 ```markdown
 Run all quality gates on the codebase:
@@ -987,7 +987,7 @@ other projects will use.
 
 ```bash
 # Validate all template files have required sections
-./scripts/validate-templates.sh
+./scripts/check-templates.sh
 
 # Test the scaffold script
 ./scripts/scaffold.sh /tmp/test-project
@@ -1017,7 +1017,7 @@ npx markdownlint-cli2 "**/*.md"
 - README.md must list every scaffold file with its purpose
 - Template files use [brackets] for placeholder values
 - Non-template files (settings.json, CI workflows) should work with minimal changes
-- The canonical gate command is `gates`. Never use `quality`, `validate`, or `claude:gates` anywhere.
+- The canonical gate command is `gates`. Never use `quality`, `validate`, `check`, or `claude:gates` anywhere.
 - After changing any scaffold/ file, regenerate init.sh with `./scripts/generate-init.sh`
 
 ```text
@@ -1034,7 +1034,7 @@ Apply these standards to everything you build:
 5. **All markdown must pass markdownlint** with default rules
 6. **Template files must be immediately usable** — copy, replace brackets, done
 7. **No dead links** — all cross-references between docs must resolve
-8. **Consistent terminology** — use "gates" not "quality"/"checks"/"validate", "scaffold" not "boilerplate", "guardrail tests" not "architecture tests"
+8. **Consistent terminology** — use "gates" not "quality"/"checks"/"check", "scaffold" not "boilerplate", "guardrail tests" not "architecture tests"
 
 ---
 

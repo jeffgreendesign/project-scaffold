@@ -51,18 +51,19 @@ Every file in `scaffold/` with its purpose:
 |------|---------|
 | `CLAUDE.md.template` | Project context for LLM agents — commands, architecture, conventions |
 | `NOW.md.template` | Session state tracker — prevents context loss between sessions |
-| `AGENTS.md.template` | External agent integration guide (for projects with APIs) |
+| `AGENTS.md.template` | Codex/GPT agent instructions + optional external API guide |
 | `llms.txt.template` | AI-readable project summary for discovery |
 | `.env.example` | Environment variable documentation with examples |
 | `CHANGELOG.md` | Changelog starter following Keep a Changelog format |
 | `.claude/settings.json` | Pre-approved safe commands, blocked destructive operations |
-| `.claude/commands/validate.md` | Slash command: run all quality gates |
+| `.claude/commands/gates.md` | Slash command: run all quality gates |
 | `.claude/commands/new-component.md` | Slash command: create component following conventions |
 | `.claude/hooks/session-start.sh` | Auto-install dependencies on session start |
 | `.github/workflows/ci.yml` | CI pipeline: lint, typecheck, test, build via `gates` |
 | `.github/workflows/changelog-check.yml` | Enforce changelog updates on PRs |
 | `.husky/pre-commit` | Pre-commit hook running fast quality checks |
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules for TypeScript conventions |
+| `.cursor/rules/shell-scripts.mdc` | Cursor IDE rules for shell script conventions and linting |
 | `scripts/security-check.sh` | Pre-commit security scanner (path traversal, secrets, eval) |
 | `scripts/doc-sync-check.sh` | Documentation drift detection |
 | `config/biome.json` | Biome linter + formatter config (strict, tabs, single quotes) |
@@ -85,7 +86,7 @@ Adopt incrementally. Each tier builds on the previous one. See [docs/TIERS.md](d
 | **0** | 15 min | LLM can work autonomously | CLAUDE.md, settings.json, .env.example, `gates` script |
 | **1** | 1 hr | Mistakes caught before repo | linter, strict types, hooks, CI, .node-version |
 | **2** | 2-3 hrs | Sustained multi-session quality | NOW.md, commands, guardrail tests, changelog |
-| **3** | optional | External agent discoverability | llms.txt, AGENTS.md, Cursor rules |
+| **3** | optional | Multi-agent discoverability and DX | llms.txt, AGENTS.md, Cursor rules |
 
 **Start with Tier 0.** If you can only do one thing: write the CLAUDE.md.
 

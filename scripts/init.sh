@@ -71,6 +71,16 @@ write_executable() {
   chmod +x "$TARGET_DIR/$1"
 }
 
+write_file '.claude/commands/gates.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_GATES_MD_7f3d9a'
+Run all quality gates on the codebase:
+
+1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)
+2. Report results for each gate (typecheck, lint, test, build)
+3. If any gate fails, identify the specific errors
+4. Do NOT proceed with committing until all gates pass
+
+SCAFFOLD_EOF__CLAUDE_COMMANDS_GATES_MD_7f3d9a
+
 write_file '.claude/commands/new-component.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD_7f3d9a'
 Create a new component following project conventions:
 
@@ -90,16 +100,6 @@ Create a new component following project conventions:
 1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)
 
 SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD_7f3d9a
-
-write_file '.claude/commands/validate.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD_7f3d9a'
-Run all quality gates on the codebase:
-
-1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)
-2. Report results for each gate (typecheck, lint, test, build)
-3. If any gate fails, identify the specific errors
-4. Do NOT proceed with committing until all gates pass
-
-SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD_7f3d9a
 
 write_executable '.claude/hooks/session-start.sh' << 'SCAFFOLD_EOF__CLAUDE_HOOKS_SESSION-START_SH_7f3d9a'
 #!/bin/bash
@@ -484,40 +484,68 @@ SCAFFOLD_EOF__HUSKY_PRE-COMMIT_7f3d9a
 write_file 'AGENTS.md' << 'SCAFFOLD_EOF_AGENTS_MD_TEMPLATE_7f3d9a'
 # AGENTS.md
 
-<!-- CUSTOMIZE: Only create this file if your project exposes an API, SDK, or tool interface. -->
-<!-- This tells external AI agents how to USE your project (vs. CLAUDE.md which tells agents how to DEVELOP it). -->
+<!-- CUSTOMIZE: This file is for Codex/GPT-style agents. Keep it concise and executable. -->
 
-## Quick Reference
+## Scope
 
-| Aspect  | Value                          |
-|---------|--------------------------------|
+These instructions apply to the entire repository unless a deeper `AGENTS.md` overrides them.
+
+## Project Snapshot
+
+- **What this repo is:** [One sentence]
+- **Primary stack:** [TypeScript / Python / mixed]
+- **Package manager:** [pnpm / npm / yarn / pip]
+- **Canonical quality gate:** `[pnpm gates]`
+
+## First Commands To Run
+
+<!-- CUSTOMIZE: Keep this list short and copy/paste-ready. -->
+
+```bash
+[pnpm install]
+[pnpm gates]
+```
+
+## Working Rules
+
+<!-- CUSTOMIZE: Add repo-specific constraints that prevent expensive mistakes. -->
+
+1. Use `rg` for search (not slow recursive grep).
+2. Make minimal, targeted edits. Avoid broad refactors unless requested.
+3. Run `[pnpm gates]` before finishing.
+4. Update docs when behavior or interfaces change.
+
+## PR / Commit Requirements
+
+<!-- CUSTOMIZE: Include your PR checklist and release notes expectations. -->
+
+- Include a short summary of changes and impact.
+- Include tests/checks that were run.
+- If behavior changes, update `CHANGELOG.md` under `[Unreleased]`.
+
+## Documentation Map
+
+- `README.md` — high-level project overview
+- `CLAUDE.md` — deep repo conventions and architecture
+- `NOW.md` — current sprint status and next actions
+- `docs/` — long-form decisions and implementation guides
+
+## Optional: External API Usage Guide
+
+<!-- CUSTOMIZE: Keep this section only if the project exposes an API/SDK/tool for external agents. -->
+
+| Aspect  | Value |
+|---------|-------|
 | API     | [REST / GraphQL / MCP], base URL [/api/v1] |
 | Auth    | [Bearer token / API key / none] |
-| Limits  | [Rate limits]                  |
+| Limits  | [Rate limits] |
 
-## Endpoint Selection Guide
+### Endpoint Selection Guide
 
 | User Intent          | Endpoint        | Key Params          |
 |----------------------|-----------------|---------------------|
 | [Intent 1]           | [METHOD /path]  | [params]            |
 | [Intent 2]           | [METHOD /path]  | [params]            |
-
-## Common Workflows
-
-<!-- Show 2-3 typical multi-step workflows an agent would perform -->
-
-### [Workflow Name]
-
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-## Error Handling
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| 401   | [cause] | [fix] |
-| 429   | [cause] | [fix] |
 
 SCAFFOLD_EOF_AGENTS_MD_TEMPLATE_7f3d9a
 
@@ -770,6 +798,8 @@ SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE_7f3d9a
 
 write_file 'NOW.md' << 'SCAFFOLD_EOF_NOW_MD_TEMPLATE_7f3d9a'
 # What's Happening Now
+
+<!-- CUSTOMIZE: Replace placeholders and keep this file updated at session end. -->
 
 <!-- This file prevents context loss between sessions. -->
 <!-- Update it at the end of every work session. -->
@@ -1049,6 +1079,8 @@ SCAFFOLD_EOF_CONFIG_TSCONFIG_PYTHON-EQUIV_MD_7f3d9a
 
 write_file 'llms.txt' << 'SCAFFOLD_EOF_LLMS_TXT_TEMPLATE_7f3d9a'
 # [Project Name]
+
+<!-- CUSTOMIZE: Replace every [bracketed] value with project-specific information. -->
 
 > [One-line description]
 
@@ -2227,5 +2259,5 @@ echo "  5. Run: $PM_RUN gates (verify everything passes)"
 echo ""
 echo "Optional:"
 echo "  - Edit NOW.md if project will last > 2 weeks"
-echo "  - Edit AGENTS.md if project exposes an API"
+echo "  - Edit AGENTS.md for Codex/GPT execution guidance"
 echo "  - Delete files you don't need (see docs/DECISION-TREES.md)"

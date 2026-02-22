@@ -26,17 +26,20 @@ Use these flowcharts to decide which scaffold files your project needs. Not ever
 
 ### AGENTS.md
 
+**Answer: Create AGENTS.md for most projects.** Use it for agent operating instructions; keep the API section only when your project exposes external interfaces.
+
 ```text
-┌──────────────────────────┐
-│ Does project expose API? │
-└──────────┬───────────────┘
+┌────────────────────────────────────┐
+│ Will Codex/GPT agents work in this │
+│ repository?                         │
+└──────────┬─────────────────────────┘
      ┌─────┴──────┐
      │             │
     Yes           No
      │             │
      ▼             ▼
-  Create        Skip
-  AGENTS.md     AGENTS.md
+  Create        Usually still
+  AGENTS.md     create it
 ```
 
 ### NOW.md
