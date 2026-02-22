@@ -315,7 +315,7 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -386,7 +386,7 @@ jobs:
     outputs:
       code: ${{ steps.filter.outputs.code }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -411,7 +411,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Read Node version from .node-version — enforces the compatibility matrix.
       # If you hardcode the version here, it WILL drift from .node-version.
@@ -419,7 +419,7 @@ jobs:
         id: node-version
         run: echo "version=$(cat .node-version)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ steps.node-version.outputs.version }}
 
@@ -444,7 +444,7 @@ jobs:
         run: corepack enable pnpm
 
       # Cache dependencies to speed up subsequent runs
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ steps.node-version.outputs.version }}
           cache: ${{ steps.pkg-manager.outputs.manager }}
@@ -485,6 +485,9 @@ write_file 'AGENTS.md' << 'SCAFFOLD_EOF_AGENTS_MD_TEMPLATE_7f3d9a'
 # AGENTS.md
 
 <!-- CUSTOMIZE: This file is for Codex/GPT-style agents. Keep it concise and executable. -->
+<!-- Codex 5.3+ reads AGENTS.md automatically before starting work (32 KiB limit). -->
+<!-- Claude Code reads CLAUDE.md instead. Maintain both files if your team uses both tools. -->
+<!-- To make Codex also read CLAUDE.md, add it to project_doc_fallback_filenames in ~/.codex/config.toml -->
 
 ## Scope
 
@@ -840,9 +843,13 @@ SCAFFOLD_EOF_CONFIG__NODE-VERSION_7f3d9a
 
 write_file 'config/biome.json' << 'SCAFFOLD_EOF_CONFIG_BIOME_JSON_7f3d9a'
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "organizeImports": {
-    "enabled": true
+  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "formatter": {
     "enabled": true,
