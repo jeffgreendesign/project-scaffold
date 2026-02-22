@@ -13,4 +13,4 @@ Create a new component following project conventions:
 
 ## After Creating
 
-1. Run `npm run gates`
+1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)

@@ -98,7 +98,8 @@ write_executable() {
 HEADER
 
 # Now iterate through all scaffold files and generate heredoc blocks
-find "$SCAFFOLD_DIR" -type f | sort | while read -r filepath; do
+# Use null-delimited find + sort for filename safety (spaces, special chars)
+while IFS= read -r -d '' filepath; do
   # Get relative path from scaffold/
   relpath="${filepath#$SCAFFOLD_DIR/}"
 
@@ -128,7 +129,7 @@ find "$SCAFFOLD_DIR" -type f | sort | while read -r filepath; do
   echo "" >> "$OUTPUT"
   echo "$delimiter" >> "$OUTPUT"
   echo "" >> "$OUTPUT"
-done
+done < <(find "$SCAFFOLD_DIR" -type f -print0 | sort -z)
 
 # Add the package.json gates script setup
 cat >> "$OUTPUT" << 'FOOTER'

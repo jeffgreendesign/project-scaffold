@@ -87,14 +87,14 @@ Create a new component following project conventions:
 
 ## After Creating
 
-1. Run `npm run gates`
+1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)
 
 SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD_7f3d9a
 
 write_file '.claude/commands/validate.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD_7f3d9a'
 Run all quality gates on the codebase:
 
-1. Run `npm run gates`
+1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)
 2. Report results for each gate (typecheck, lint, test, build)
 3. If any gate fails, identify the specific errors
 4. Do NOT proceed with committing until all gates pass
@@ -220,6 +220,11 @@ globs: ["**/*.sh"]
 - Use detection variables: `PKG_MANAGER`, `PM_RUN`, `PM_INSTALL`, `PM_EXEC`
 - Handle Yarn v1 (Classic) vs v2+ (Berry) — `yarn dlx` does not exist in v1
 - When detecting yarn version: `yarn --version 2>/dev/null | grep -q '^1\.'`
+
+## Scaffold Templates
+
+- Shell scripts in `scaffold/` are copied into user projects — they must detect the package manager at runtime (e.g., check for lockfiles) rather than relying on build-time variables
+- Non-shell templates (`.md`) cannot detect at runtime — use portable phrasing like "`npm run gates` / `pnpm gates` / `yarn gates`" instead of hardcoding one manager
 
 ## Common Mistakes
 
@@ -460,8 +465,18 @@ write_executable '.husky/pre-commit' << 'SCAFFOLD_EOF__HUSKY_PRE-COMMIT_7f3d9a'
 
 # Quality gates — must pass before commit
 # For full test suite, rely on CI. Pre-commit runs fast checks only.
-npm run lint
-npm run typecheck
+
+# Detect package manager
+if [ -f pnpm-lock.yaml ]; then
+  PM_RUN="pnpm"
+elif [ -f yarn.lock ]; then
+  PM_RUN="yarn"
+else
+  PM_RUN="npm run"
+fi
+
+$PM_RUN lint
+$PM_RUN typecheck
 
 SCAFFOLD_EOF__HUSKY_PRE-COMMIT_7f3d9a
 

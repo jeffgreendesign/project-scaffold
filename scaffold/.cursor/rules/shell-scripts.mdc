@@ -20,6 +20,11 @@ globs: ["**/*.sh"]
 - Handle Yarn v1 (Classic) vs v2+ (Berry) — `yarn dlx` does not exist in v1
 - When detecting yarn version: `yarn --version 2>/dev/null | grep -q '^1\.'`
 
+## Scaffold Templates
+
+- Shell scripts in `scaffold/` are copied into user projects — they must detect the package manager at runtime (e.g., check for lockfiles) rather than relying on build-time variables
+- Non-shell templates (`.md`) cannot detect at runtime — use portable phrasing like "`npm run gates` / `pnpm gates` / `yarn gates`" instead of hardcoding one manager
+
 ## Common Mistakes
 
 - Using `read -r` without `/dev/tty` in scripts that may run via `curl | bash`
