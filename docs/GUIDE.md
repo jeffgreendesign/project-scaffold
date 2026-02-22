@@ -413,7 +413,7 @@ npm run typecheck
 
 **How to customize:**
 
-- Change `22` to the exact version your project requires. Node 22 is Active LTS until 2027-04-30. Node 24 became LTS in Jan 2026 — use it for greenfield projects.
+- Choose the major version your project requires. Node 24 has been Active LTS since 2025-10-28; prefer it for new projects. Node 22 moved to Maintenance LTS on 2025-10-21 (EOL 2027-04-30).
 - `.node-version` pins an exact version (e.g. `22`) — CI and developers will use that exact runtime
 - State the same version in CLAUDE.md's Quick Reference table
 
