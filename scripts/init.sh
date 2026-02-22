@@ -91,6 +91,7 @@ Present your findings and proposal in this structure:
 **Understanding:** One paragraph confirming what the task requires and any ambiguities.
 
 **Reference implementations:** List existing files whose patterns this work should follow.
+
 | Creating | Follow the pattern in | Key things to match |
 |----------|----------------------|---------------------|
 | [new file/change] | [existing file path] | [specific aspects] |
@@ -98,6 +99,7 @@ Present your findings and proposal in this structure:
 **Approach:** Describe the implementation approach in 3-5 bullet points.
 
 **Files to change:**
+
 | File | Change | Why |
 |------|--------|-----|
 | [path] | [one sentence] | [one sentence] |
