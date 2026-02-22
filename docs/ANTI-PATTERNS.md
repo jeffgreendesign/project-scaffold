@@ -22,6 +22,7 @@ What not to do when setting up LLM-friendly project infrastructure. Each anti-pa
 | No debug playbook | Agent gets stuck in retry loops on common failures. Runs `npm run build` 5 times with same error. | Document top 5 failure modes and their fixes in CLAUDE.md. |
 | Changing stable exports without migration | Consumers break silently. Agent renames `getData()` to `fetchData()`, breaks every downstream import. | Require MIGRATION.md entry for any public API change (libraries only). |
 | No workspace boundary rules (monorepos) | Accidental circular deps between packages. `packages/ui` imports from `packages/api` which imports from `packages/ui`. | Guardrail test with explicit allow/deny import rules per package. |
+| Implementing multi-file changes without a plan | Agent misunderstands a requirement, builds 8 files in the wrong direction, you revert everything. More capable models go further, faster, on wrong assumptions. | For changes touching 3+ files or introducing new patterns, use `/design` to research and propose before implementing. Review the proposal. Then approve. |
 
 ## Deep Dives
 
@@ -54,6 +55,10 @@ Linters catch syntax and style. Guardrail tests catch architecture. A linter can
 ### "We have a monorepo but don't need workspace boundary tests"
 
 You will. The first time an agent creates a circular dependency between packages, you'll spend an hour debugging why the build fails. Workspace boundary tests catch this in 2 seconds at CI time.
+
+### "But planning slows me down for small changes"
+
+Correct. The `/design` workflow is for changes that touch multiple files or introduce new patterns. For single-file fixes, type fixes, and documentation updates, implement directly. The threshold: if you would review the PR diff before merging, review a proposal before implementing. Single-file changes don't need a proposal. A new subsystem spanning 8 files does.
 
 ### "Our project doesn't need all these files"
 

@@ -45,6 +45,7 @@ project-scaffold/
 │   │   ├── settings.json              # Pre-approved tool permissions
 │   │   ├── commands/
 │   │   │   ├── new-component.md       # Example slash command
+│   │   │   ├── design.md             # Research and propose before implementing
 │   │   │   └── gates.md            # Run all quality gates
 │   │   └── hooks/
 │   │       └── session-start.sh       # Auto-setup on session start
@@ -129,6 +130,14 @@ This is the most important file. Build it with:
 
 ## Project Overview
 [One paragraph: what this project does, who it's for, what problem it solves.]
+
+## Workflow
+
+<!-- CUSTOMIZE: Adjust the threshold and steps to match your team's process -->
+
+- **Small changes** (single file, typo, bug fix): implement directly
+- **Multi-file changes or new patterns** (3+ files, new subsystem, unfamiliar area): use `/design` to research the codebase and propose an approach before implementing — wait for approval before writing code
+- Always run `[pnpm gates]` before finishing any task
 
 ## Quick Reference
 
@@ -259,6 +268,17 @@ These won’t fail the build but cause problems:
 
 4. Run `[pnpm gates]`
 
+### Reference Implementations
+
+<!-- CUSTOMIZE: List the "gold standard" files for each type of creation task. -->
+
+<!-- When the agent needs to create something new, these are the files to follow. -->
+
+|When creating a new...|Follow the pattern in|Key things to match|
+|----------------------|---------------------|-------------------|
+|[Component/Route/etc.]|`[path/to/reference]`|[Aspects to match: error handling, naming, test structure, etc.]|
+|[Second type]         |`[path/to/reference]`|[Aspects to match]|
+
 ## Architecture Decisions
 
 <!-- CUSTOMIZE: Why each major tech choice was made -->
@@ -348,6 +368,8 @@ When updating [X], also update:
 - [File A]
 - [File B]
 
+When renaming or moving a reference implementation file, also update the Reference Implementations table above.
+
 ```text
 Include extensive comments explaining WHY each section exists, referencing the lessons documents. The template should be usable by copying it, replacing bracketed values, and deleting comments.
 
@@ -418,6 +440,48 @@ Create a new component following project conventions:
 ## After Creating
 
 1. Run `npm run gates`
+```
+
+### scaffold/.claude/commands/design.md
+
+```markdown
+Research the codebase and propose an implementation design for: $ARGUMENTS
+
+## Instructions
+
+### Phase 1: Research
+
+1. Read CLAUDE.md thoroughly — understand project conventions, architecture, and constraints
+2. Identify the area of the codebase relevant to this task
+3. Read all files in that area deeply — understand how the existing code works, not just function signatures
+4. Look for existing patterns that solve similar problems — these are your reference implementations
+5. Check for constraints: import boundaries, naming conventions, required patterns, test expectations
+
+### Phase 2: Propose
+
+Present your findings and proposal in this structure:
+
+**Understanding:** One paragraph confirming what the task requires and any ambiguities.
+
+**Reference implementations:** List existing files whose patterns this work should follow.
+| Creating | Follow the pattern in | Key things to match |
+|----------|----------------------|---------------------|
+| [new file/change] | [existing file path] | [specific aspects] |
+
+**Approach:** Describe the implementation approach in 3-5 bullet points.
+
+**Files to change:**
+| File | Change | Why |
+|------|--------|-----|
+| [path] | [one sentence] | [one sentence] |
+
+**Trade-offs:** What alternatives were considered and why this approach wins.
+
+**Risks:** Anything that could go wrong or needs extra attention.
+
+## Critical Rule
+
+**Do NOT implement yet.** Present the proposal and wait for the user to review, annotate, and approve before writing any code. The user may correct assumptions, reject approaches, add constraints, or redirect the design. Implementation begins only after explicit approval.
 ```
 
 ### scaffold/.claude/hooks/session-start.sh
