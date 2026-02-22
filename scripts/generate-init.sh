@@ -128,15 +128,16 @@ cat >> "$OUTPUT" << 'FOOTER'
 
 # Set up the gates script in package.json
 setup_gates() {
+  local run_cmd="npm run"
+  if [ "$PKG_MANAGER" = "pnpm" ]; then
+    run_cmd="pnpm"
+  elif [ "$PKG_MANAGER" = "yarn" ]; then
+    run_cmd="yarn"
+  fi
+
   if [ ! -f "$TARGET_DIR/package.json" ]; then
     echo ""
     echo "Creating package.json with gates script..."
-    local run_cmd="npm run"
-    if [ "$PKG_MANAGER" = "pnpm" ]; then
-      run_cmd="pnpm"
-    elif [ "$PKG_MANAGER" = "yarn" ]; then
-      run_cmd="yarn"
-    fi
 
     cat > "$TARGET_DIR/package.json" << PKGJSON
 {
@@ -158,7 +159,7 @@ PKGJSON
     echo ""
     echo "package.json already exists. Add this script manually:"
     echo ""
-    echo '  "gates": "npm run lint && npm run typecheck && npm run test && npm run build"'
+    echo "  \"gates\": \"$run_cmd lint && $run_cmd typecheck && $run_cmd test && $run_cmd build\""
     echo ""
   fi
 }

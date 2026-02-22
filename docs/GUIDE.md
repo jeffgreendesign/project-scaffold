@@ -413,8 +413,8 @@ npm run typecheck
 
 **How to customize:**
 
-- Change `22` to whatever version your project requires
-- This is the minimum version — CI will use exactly this version
+- Change `22` to the exact version your project requires
+- `.node-version` pins an exact version (e.g. `22`) — CI and developers will use that exact runtime
 - State the same version in CLAUDE.md's Quick Reference table
 
 **Common mistakes:**
@@ -917,7 +917,7 @@ Structure every coding convention with three parts:
 
 **Example:**
 
-```markdown
+````markdown
 **Rule:** Always use parameterized queries for database operations.
 **Bug it prevents:** SQL injection — user input in string-interpolated queries
 can execute arbitrary SQL. This is a CVE-level vulnerability.
@@ -929,7 +929,7 @@ const users = await db.query(`SELECT * FROM users WHERE id = '${userId}'`);
 // CORRECT — parameterized query
 const users = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
 ```
-```
+````
 
 ---
 

@@ -33,6 +33,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 ERRORS=0
+RULES_RUN=0
 
 # ============================================================================
 # CUSTOMIZE: Define your sync rules below.
@@ -51,6 +52,7 @@ check_sync() {
   shift 3
   local doc_files=("$@")
 
+  RULES_RUN=$((RULES_RUN + 1))
   echo -e "${BLUE}Checking: $description${NC}"
 
   # Extract items from source files
@@ -117,14 +119,14 @@ check_sync() {
 # check_sync \
 #   "Exported functions → API.md" \
 #   "src/lib/*.ts" \
-#   "export (function|const) ([a-zA-Z]+)" \
+#   "export (?:function|const) ([a-zA-Z]+)" \
 #   "docs/API.md"
 
 # Example 2: Route registrations must be in AGENTS.md
 # check_sync \
 #   "Route registrations → AGENTS.md" \
 #   "src/routes/*.ts" \
-#   "router\.(get|post|put|delete)\(['\"]([^'\"]+)" \
+#   "router\.(?:get|post|put|delete)\(['\"]([^'\"]+)" \
 #   "AGENTS.md"
 
 # Example 3: Environment variables must be in .env.example
@@ -137,12 +139,14 @@ check_sync() {
 # ============================================================================
 # Placeholder: Remove this block once you've added your own rules above
 # ============================================================================
-echo -e "${YELLOW}No sync rules configured yet.${NC}"
-echo ""
-echo "Edit this script to add your project's sync rules."
-echo "See the CUSTOMIZE section for examples."
-echo ""
-exit 0
+if [ "$RULES_RUN" -eq 0 ]; then
+  echo -e "${YELLOW}No sync rules configured yet.${NC}"
+  echo ""
+  echo "Edit this script to add your project's sync rules."
+  echo "See the CUSTOMIZE section for examples."
+  echo ""
+  exit 0
+fi
 
 # ============================================================================
 # Summary

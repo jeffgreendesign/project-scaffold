@@ -195,9 +195,13 @@ class TestPaginationEnforcement(unittest.TestCase):
             r"\.(all|filter|filter_by|select|query)\s*\("
         )
 
-        # Patterns that indicate pagination is present
-        pagination_patterns = re.compile(
-            r"\.(limit|paginate|slice|first|\[:|\[0:)\s*\("
+        # Patterns that indicate pagination is present (method calls)
+        pagination_call_patterns = re.compile(
+            r"\.(limit|paginate|first)\s*\("
+        )
+        # Patterns that indicate pagination is present (slice syntax)
+        pagination_slice_patterns = re.compile(
+            r"\[\s*\d*\s*:\s*\d*\s*\]"
         )
 
         for filepath in files:
@@ -218,7 +222,7 @@ class TestPaginationEnforcement(unittest.TestCase):
                     context_end = min(len(lines), i + 5)
                     context = "".join(lines[context_start:context_end])
 
-                    if not pagination_patterns.search(context):
+                    if not (pagination_call_patterns.search(context) or pagination_slice_patterns.search(context)):
                         violations.append(
                             Violation(
                                 file=filepath,

@@ -111,9 +111,27 @@ elif [ -f "yarn.lock" ]; then
 elif [ -f "package-lock.json" ]; then
   npm ci 2>&1
 elif [ -f "pyproject.toml" ]; then
-  pip install -e ".[dev]" --quiet 2>&1
+  # Prefer python -m pip when not in a virtual environment
+  PIP_CMD="pip"
+  if [ -z "${VIRTUAL_ENV:-}" ]; then
+    echo "⚠ No virtual environment detected — using python -m pip"
+    PIP_CMD="python -m pip"
+  fi
+  # Only use .[dev] if pyproject.toml defines dev extras
+  if grep -qE '\[project\.optional-dependencies\]' pyproject.toml && grep -qE '^\s*dev\s*=' pyproject.toml; then
+    $PIP_CMD install -e ".[dev]" --quiet 2>&1
+  else
+    $PIP_CMD install -e . --quiet 2>&1
+  fi
 elif [ -f "requirements.txt" ]; then
-  pip install -r requirements.txt --quiet 2>&1
+  PIP_CMD="pip"
+  if [ -z "${VIRTUAL_ENV:-}" ]; then
+    echo "⚠ No virtual environment detected — using python -m pip"
+    PIP_CMD="python -m pip"
+  fi
+  $PIP_CMD install -r requirements.txt --quiet 2>&1
+else
+  echo "⚠ No lockfile or project file found — skipping dependency install"
 fi
 
 echo "--- Session start complete ---"
@@ -130,6 +148,30 @@ write_file '.claude/settings.json' << 'SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON'
       "Bash(npm run test*)",
       "Bash(npm run build*)",
       "Bash(npm run dev*)",
+      "Bash(pnpm run gates*)",
+      "Bash(pnpm run lint*)",
+      "Bash(pnpm run typecheck*)",
+      "Bash(pnpm run test*)",
+      "Bash(pnpm run build*)",
+      "Bash(pnpm run dev*)",
+      "Bash(pnpm gates*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm dev*)",
+      "Bash(yarn run gates*)",
+      "Bash(yarn run lint*)",
+      "Bash(yarn run typecheck*)",
+      "Bash(yarn run test*)",
+      "Bash(yarn run build*)",
+      "Bash(yarn run dev*)",
+      "Bash(yarn gates*)",
+      "Bash(yarn lint*)",
+      "Bash(yarn typecheck*)",
+      "Bash(yarn test*)",
+      "Bash(yarn build*)",
+      "Bash(yarn dev*)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",
@@ -370,7 +412,7 @@ jobs:
       # This is the same command as pre-commit hooks and local dev.
       # CI should never run different checks than local — one command everywhere.
       - name: Run quality gates
-        run: npm run gates
+        run: ${{ steps.pkg-manager.outputs.manager }} run gates
 
 SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML
 
@@ -436,6 +478,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/)
 ### Added
 
 - Initial project setup
+
+<!-- CUSTOMIZE: Replace [your-org/your-repo] with your GitHub repository path -->
+[Unreleased]: https://github.com/[your-org/your-repo]/compare/v0.0.0...HEAD
 
 SCAFFOLD_EOF_CHANGELOG_MD
 
@@ -717,7 +762,6 @@ write_file 'config/biome.json' << 'SCAFFOLD_EOF_CONFIG_BIOME_JSON'
   "formatter": {
     "enabled": true,
     "indentStyle": "tab",
-    "indentWidth": 2,
     "lineWidth": 100
   },
   "javascript": {
@@ -833,8 +877,8 @@ select = [
 ]
 
 [tool.ruff.format]
-quote-style = "single"
-indent-style = "tab"
+quote-style = "double"
+indent-style = "space"
 ```
 
 ## Type Checker: TypeScript strict → mypy / pyright
@@ -1008,6 +1052,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 ERRORS=0
+RULES_RUN=0
 
 # ============================================================================
 # CUSTOMIZE: Define your sync rules below.
@@ -1026,6 +1071,7 @@ check_sync() {
   shift 3
   local doc_files=("$@")
 
+  RULES_RUN=$((RULES_RUN + 1))
   echo -e "${BLUE}Checking: $description${NC}"
 
   # Extract items from source files
@@ -1092,14 +1138,14 @@ check_sync() {
 # check_sync \
 #   "Exported functions → API.md" \
 #   "src/lib/*.ts" \
-#   "export (function|const) ([a-zA-Z]+)" \
+#   "export (?:function|const) ([a-zA-Z]+)" \
 #   "docs/API.md"
 
 # Example 2: Route registrations must be in AGENTS.md
 # check_sync \
 #   "Route registrations → AGENTS.md" \
 #   "src/routes/*.ts" \
-#   "router\.(get|post|put|delete)\(['\"]([^'\"]+)" \
+#   "router\.(?:get|post|put|delete)\(['\"]([^'\"]+)" \
 #   "AGENTS.md"
 
 # Example 3: Environment variables must be in .env.example
@@ -1112,12 +1158,14 @@ check_sync() {
 # ============================================================================
 # Placeholder: Remove this block once you've added your own rules above
 # ============================================================================
-echo -e "${YELLOW}No sync rules configured yet.${NC}"
-echo ""
-echo "Edit this script to add your project's sync rules."
-echo "See the CUSTOMIZE section for examples."
-echo ""
-exit 0
+if [ "$RULES_RUN" -eq 0 ]; then
+  echo -e "${YELLOW}No sync rules configured yet.${NC}"
+  echo ""
+  echo "Edit this script to add your project's sync rules."
+  echo "See the CUSTOMIZE section for examples."
+  echo ""
+  exit 0
+fi
 
 # ============================================================================
 # Summary
@@ -1223,7 +1271,7 @@ for file in $FILES; do
       # Skip comments
       TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
       case "$TRIMMED" in
-        //*|#*|\**) ;; # skip comments
+        "//"*|"#"*|"*"*) ;; # skip comments
         *) warn "console.log() in non-test file (use structured logger)" "$file" "$LINE_NUM" ;;
       esac
     fi
@@ -1242,7 +1290,7 @@ for file in $FILES; do
     if echo "$line" | grep -qE "\beval\s*\(" 2>/dev/null; then
       TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
       case "$TRIMMED" in
-        //*|#*|\**) ;; # skip comments
+        "//"*|"#"*|"*"*) ;; # skip comments
         *) warn "eval() usage — code injection risk" "$file" "$LINE_NUM" ;;
       esac
     fi
@@ -1494,9 +1542,13 @@ class TestPaginationEnforcement(unittest.TestCase):
             r"\.(all|filter|filter_by|select|query)\s*\("
         )
 
-        # Patterns that indicate pagination is present
-        pagination_patterns = re.compile(
-            r"\.(limit|paginate|slice|first|\[:|\[0:)\s*\("
+        # Patterns that indicate pagination is present (method calls)
+        pagination_call_patterns = re.compile(
+            r"\.(limit|paginate|first)\s*\("
+        )
+        # Patterns that indicate pagination is present (slice syntax)
+        pagination_slice_patterns = re.compile(
+            r"\[\s*\d*\s*:\s*\d*\s*\]"
         )
 
         for filepath in files:
@@ -1517,7 +1569,7 @@ class TestPaginationEnforcement(unittest.TestCase):
                     context_end = min(len(lines), i + 5)
                     context = "".join(lines[context_start:context_end])
 
-                    if not pagination_patterns.search(context):
+                    if not (pagination_call_patterns.search(context) or pagination_slice_patterns.search(context)):
                         violations.append(
                             Violation(
                                 file=filepath,
@@ -1708,19 +1760,20 @@ function findForbiddenImports(
   const lines = content.split('\n');
   const violations: { module: string; line: number; text: string }[] = [];
 
+  // Pre-compile patterns once per module to avoid repeated RegExp construction
+  const compiledPatterns = forbiddenModules.map((mod) => ({
+    module: mod,
+    patterns: [
+      new RegExp(`from\\s+['"]${escapeRegex(mod)}['"]`),
+      new RegExp(`import\\s+['"]${escapeRegex(mod)}['"]`),
+      new RegExp(`require\\s*\\(\\s*['"]${escapeRegex(mod)}['"]`),
+    ],
+  }));
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!;
 
-    for (const mod of forbiddenModules) {
-      // Match: import ... from 'module'
-      // Match: import 'module'
-      // Match: require('module')
-      const patterns = [
-        new RegExp(`from\\s+['"]${escapeRegex(mod)}['"]`),
-        new RegExp(`import\\s+['"]${escapeRegex(mod)}['"]`),
-        new RegExp(`require\\s*\\(\\s*['"]${escapeRegex(mod)}['"]`),
-      ];
-
+    for (const { module: mod, patterns } of compiledPatterns) {
       for (const pattern of patterns) {
         if (pattern.test(line)) {
           violations.push({
@@ -1920,15 +1973,29 @@ function findCrossPackageImports(
         // Match imports like '@scope/package-name' or relative paths to other packages
         const pkgName = path.basename(pkg);
         const scopedName = `@${path.basename(path.dirname(pkg))}/${pkgName}`;
+        const pkgRoot = path.resolve(pkg);
 
+        let matched = false;
+
+        // Check bare/scoped package name imports
         if (
           importPath === pkgName ||
           importPath.startsWith(pkgName + '/') ||
           importPath === scopedName ||
-          importPath.startsWith(scopedName + '/') ||
-          importPath.includes(`../${pkg}`) ||
-          importPath.includes(`../../${pkg}`)
+          importPath.startsWith(scopedName + '/')
         ) {
+          matched = true;
+        }
+
+        // Check relative imports by resolving the path
+        if (!matched && importPath.startsWith('.')) {
+          const resolved = path.resolve(path.dirname(filePath), importPath);
+          if (resolved === pkgRoot || resolved.startsWith(pkgRoot + path.sep)) {
+            matched = true;
+          }
+        }
+
+        if (matched) {
           results.push({
             importedPackage: pkg,
             line: i + 1,
@@ -2031,15 +2098,16 @@ SCAFFOLD_EOF_TESTS_TEST_WORKSPACE_BOUNDARIES_TS
 
 # Set up the gates script in package.json
 setup_gates() {
+  local run_cmd="npm run"
+  if [ "$PKG_MANAGER" = "pnpm" ]; then
+    run_cmd="pnpm"
+  elif [ "$PKG_MANAGER" = "yarn" ]; then
+    run_cmd="yarn"
+  fi
+
   if [ ! -f "$TARGET_DIR/package.json" ]; then
     echo ""
     echo "Creating package.json with gates script..."
-    local run_cmd="npm run"
-    if [ "$PKG_MANAGER" = "pnpm" ]; then
-      run_cmd="pnpm"
-    elif [ "$PKG_MANAGER" = "yarn" ]; then
-      run_cmd="yarn"
-    fi
 
     cat > "$TARGET_DIR/package.json" << PKGJSON
 {
@@ -2061,7 +2129,7 @@ PKGJSON
     echo ""
     echo "package.json already exists. Add this script manually:"
     echo ""
-    echo '  "gates": "npm run lint && npm run typecheck && npm run test && npm run build"'
+    echo "  \"gates\": \"$run_cmd lint && $run_cmd typecheck && $run_cmd test && $run_cmd build\""
     echo ""
   fi
 }

@@ -37,14 +37,14 @@ echo ""
 # Copy all files from scaffold/ to target, preserving directory structure
 # Use rsync if available, otherwise fall back to cp
 if command -v rsync &>/dev/null; then
-  rsync -a --relative "$SCAFFOLD_DIR/./" "$TARGET_DIR/" 2>/dev/null || \
+  rsync -a "$SCAFFOLD_DIR/" "$TARGET_DIR/" || \
     cp -R "$SCAFFOLD_DIR"/. "$TARGET_DIR/"
 else
   cp -R "$SCAFFOLD_DIR"/. "$TARGET_DIR/"
 fi
 
 # Rename .template files (remove the .template extension)
-find "$TARGET_DIR" -name "*.template" -type f | while read -r template_file; do
+find "$TARGET_DIR" -name "*.template" -type f -print0 | while IFS= read -r -d '' template_file; do
   target_file="${template_file%.template}"
   mv "$template_file" "$target_file"
   echo "  Renamed: $(basename "$template_file") → $(basename "$target_file")"

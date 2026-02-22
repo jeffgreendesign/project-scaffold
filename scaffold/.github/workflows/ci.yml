@@ -100,4 +100,4 @@ jobs:
       # This is the same command as pre-commit hooks and local dev.
       # CI should never run different checks than local — one command everywhere.
       - name: Run quality gates
-        run: npm run gates
+        run: ${{ steps.pkg-manager.outputs.manager }} run gates

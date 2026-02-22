@@ -84,7 +84,7 @@ for file in $FILES; do
       # Skip comments
       TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
       case "$TRIMMED" in
-        //*|#*|\**) ;; # skip comments
+        "//"*|"#"*|"*"*) ;; # skip comments
         *) warn "console.log() in non-test file (use structured logger)" "$file" "$LINE_NUM" ;;
       esac
     fi
@@ -103,7 +103,7 @@ for file in $FILES; do
     if echo "$line" | grep -qE "\beval\s*\(" 2>/dev/null; then
       TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
       case "$TRIMMED" in
-        //*|#*|\**) ;; # skip comments
+        "//"*|"#"*|"*"*) ;; # skip comments
         *) warn "eval() usage — code injection risk" "$file" "$LINE_NUM" ;;
       esac
     fi

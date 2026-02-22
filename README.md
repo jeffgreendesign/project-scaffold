@@ -28,6 +28,15 @@ git clone https://github.com/jeffgreendesign/project-scaffold.git
 curl -sL https://raw.githubusercontent.com/jeffgreendesign/project-scaffold/main/scripts/init.sh | bash
 ```
 
+> **Security note:** Piping `curl` to `bash` executes remote code without review.
+> To inspect the script first:
+>
+> ```bash
+> curl -sL https://raw.githubusercontent.com/jeffgreendesign/project-scaffold/main/scripts/init.sh -o init.sh
+> less init.sh        # review the script
+> bash init.sh        # run after review
+> ```
+
 ### Option D: Cherry-Pick Individual Files
 
 Browse the `scaffold/` directory and copy only the files you need.

@@ -102,19 +102,20 @@ function findForbiddenImports(
   const lines = content.split('\n');
   const violations: { module: string; line: number; text: string }[] = [];
 
+  // Pre-compile patterns once per module to avoid repeated RegExp construction
+  const compiledPatterns = forbiddenModules.map((mod) => ({
+    module: mod,
+    patterns: [
+      new RegExp(`from\\s+['"]${escapeRegex(mod)}['"]`),
+      new RegExp(`import\\s+['"]${escapeRegex(mod)}['"]`),
+      new RegExp(`require\\s*\\(\\s*['"]${escapeRegex(mod)}['"]`),
+    ],
+  }));
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!;
 
-    for (const mod of forbiddenModules) {
-      // Match: import ... from 'module'
-      // Match: import 'module'
-      // Match: require('module')
-      const patterns = [
-        new RegExp(`from\\s+['"]${escapeRegex(mod)}['"]`),
-        new RegExp(`import\\s+['"]${escapeRegex(mod)}['"]`),
-        new RegExp(`require\\s*\\(\\s*['"]${escapeRegex(mod)}['"]`),
-      ];
-
+    for (const { module: mod, patterns } of compiledPatterns) {
       for (const pattern of patterns) {
         if (pattern.test(line)) {
           violations.push({

@@ -14,9 +14,27 @@ elif [ -f "yarn.lock" ]; then
 elif [ -f "package-lock.json" ]; then
   npm ci 2>&1
 elif [ -f "pyproject.toml" ]; then
-  pip install -e ".[dev]" --quiet 2>&1
+  # Prefer python -m pip when not in a virtual environment
+  PIP_CMD="pip"
+  if [ -z "${VIRTUAL_ENV:-}" ]; then
+    echo "⚠ No virtual environment detected — using python -m pip"
+    PIP_CMD="python -m pip"
+  fi
+  # Only use .[dev] if pyproject.toml defines dev extras
+  if grep -qE '\[project\.optional-dependencies\]' pyproject.toml && grep -qE '^\s*dev\s*=' pyproject.toml; then
+    $PIP_CMD install -e ".[dev]" --quiet 2>&1
+  else
+    $PIP_CMD install -e . --quiet 2>&1
+  fi
 elif [ -f "requirements.txt" ]; then
-  pip install -r requirements.txt --quiet 2>&1
+  PIP_CMD="pip"
+  if [ -z "${VIRTUAL_ENV:-}" ]; then
+    echo "⚠ No virtual environment detected — using python -m pip"
+    PIP_CMD="python -m pip"
+  fi
+  $PIP_CMD install -r requirements.txt --quiet 2>&1
+else
+  echo "⚠ No lockfile or project file found — skipping dependency install"
 fi
 
 echo "--- Session start complete ---"

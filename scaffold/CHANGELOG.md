@@ -9,3 +9,6 @@ Format: [Keep a Changelog](https://keepachangelog.com/)
 ### Added
 
 - Initial project setup
+
+<!-- CUSTOMIZE: Replace [your-org/your-repo] with your GitHub repository path -->
+[Unreleased]: https://github.com/[your-org/your-repo]/compare/v0.0.0...HEAD

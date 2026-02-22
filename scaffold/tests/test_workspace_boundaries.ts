@@ -129,15 +129,29 @@ function findCrossPackageImports(
         // Match imports like '@scope/package-name' or relative paths to other packages
         const pkgName = path.basename(pkg);
         const scopedName = `@${path.basename(path.dirname(pkg))}/${pkgName}`;
+        const pkgRoot = path.resolve(pkg);
 
+        let matched = false;
+
+        // Check bare/scoped package name imports
         if (
           importPath === pkgName ||
           importPath.startsWith(pkgName + '/') ||
           importPath === scopedName ||
-          importPath.startsWith(scopedName + '/') ||
-          importPath.includes(`../${pkg}`) ||
-          importPath.includes(`../../${pkg}`)
+          importPath.startsWith(scopedName + '/')
         ) {
+          matched = true;
+        }
+
+        // Check relative imports by resolving the path
+        if (!matched && importPath.startsWith('.')) {
+          const resolved = path.resolve(path.dirname(filePath), importPath);
+          if (resolved === pkgRoot || resolved.startsWith(pkgRoot + path.sep)) {
+            matched = true;
+          }
+        }
+
+        if (matched) {
           results.push({
             importedPackage: pkg,
             line: i + 1,

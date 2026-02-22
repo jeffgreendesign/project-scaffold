@@ -33,8 +33,8 @@ select = [
 ]
 
 [tool.ruff.format]
-quote-style = "single"
-indent-style = "tab"
+quote-style = "double"
+indent-style = "space"
 ```
 
 ## Type Checker: TypeScript strict → mypy / pyright
