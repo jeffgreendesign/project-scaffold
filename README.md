@@ -56,7 +56,7 @@ Every file in `scaffold/` with its purpose:
 | `.env.example` | Environment variable documentation with examples |
 | `CHANGELOG.md` | Changelog starter following Keep a Changelog format |
 | `.claude/settings.json` | Pre-approved safe commands, blocked destructive operations |
-| `.claude/commands/validate.md` | Slash command: run all quality gates |
+| `.claude/commands/gates.md` | Slash command: run all quality gates |
 | `.claude/commands/new-component.md` | Slash command: create component following conventions |
 | `.claude/hooks/session-start.sh` | Auto-install dependencies on session start |
 | `.github/workflows/ci.yml` | CI pipeline: lint, typecheck, test, build via `gates` |

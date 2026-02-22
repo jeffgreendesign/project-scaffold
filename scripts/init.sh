@@ -71,6 +71,16 @@ write_executable() {
   chmod +x "$TARGET_DIR/$1"
 }
 
+write_file '.claude/commands/gates.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_GATES_MD_7f3d9a'
+Run all quality gates on the codebase:
+
+1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)
+2. Report results for each gate (typecheck, lint, test, build)
+3. If any gate fails, identify the specific errors
+4. Do NOT proceed with committing until all gates pass
+
+SCAFFOLD_EOF__CLAUDE_COMMANDS_GATES_MD_7f3d9a
+
 write_file '.claude/commands/new-component.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD_7f3d9a'
 Create a new component following project conventions:
 
@@ -90,16 +100,6 @@ Create a new component following project conventions:
 1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)
 
 SCAFFOLD_EOF__CLAUDE_COMMANDS_NEW-COMPONENT_MD_7f3d9a
-
-write_file '.claude/commands/validate.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD_7f3d9a'
-Run all quality gates on the codebase:
-
-1. Run the `gates` script (`npm run gates` / `pnpm gates` / `yarn gates`)
-2. Report results for each gate (typecheck, lint, test, build)
-3. If any gate fails, identify the specific errors
-4. Do NOT proceed with committing until all gates pass
-
-SCAFFOLD_EOF__CLAUDE_COMMANDS_VALIDATE_MD_7f3d9a
 
 write_executable '.claude/hooks/session-start.sh' << 'SCAFFOLD_EOF__CLAUDE_HOOKS_SESSION-START_SH_7f3d9a'
 #!/bin/bash

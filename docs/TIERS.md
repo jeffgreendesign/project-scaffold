@@ -98,7 +98,7 @@ Tier 0 tells the agent what to do. Tier 1 enforces it. Without enforcement, agen
 | File | Purpose | Project Type |
 |------|---------|-------------|
 | `NOW.md` | Session state tracker — prevents context loss | All |
-| `.claude/commands/validate.md` | Slash command to run all gates | All |
+| `.claude/commands/gates.md` | Slash command to run all gates | All |
 | `.claude/commands/new-component.md` | Slash command for component creation | All |
 | `tests/test_architecture.ts` | Guardrail test — import boundaries | All |
 | `tests/test_architecture.py` | Guardrail test — Python equivalent | Python |

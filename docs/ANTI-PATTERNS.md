@@ -11,7 +11,7 @@ What not to do when setting up LLM-friendly project infrastructure. Each anti-pa
 | "Update docs later" | Later never comes. The PR ships, the ticket closes, docs rot. | Atomic commits — code and docs in the same PR, same commit. |
 | Instructions without enforcement | LLMs ignore prose rules. "Please don't use any" doesn't work when the agent is under pressure to ship. | Linter + CI + hooks. Make rules structural, not aspirational. |
 | No `gates` script | LLMs skip individual checks. Agent runs tests but forgets linting. Or lints but skips typecheck. | One command runs everything: `npm run gates`. |
-| Multiple gate command names | Agent doesn't know which to run. `npm run check` in CI, `npm run validate` locally, `npm run quality` in docs. | Standardize on `gates` everywhere — CI, hooks, docs, CLAUDE.md. |
+| Multiple gate command names | Agent doesn't know which to run. `npm run check` in CI, `npm run gates` locally, `npm run quality` in docs. | Standardize on `gates` everywhere — CI, hooks, docs, CLAUDE.md. |
 | Relaxed TypeScript | `any` masks real bugs. Agent uses `any` as an escape hatch, bugs surface in production. | `strict: true`, `noUncheckedIndexedAccess: true`, lint rule banning `any`. |
 | Version numbers in 10 places | They'll disagree within a week. Agent updates package.json but not the README badge. | Single source of truth. One file owns the version. |
 | Separate doc PRs | Docs lag behind code. "I'll update the docs in a follow-up PR" → PR never created. | Same PR, same commit. Code change = doc change. |

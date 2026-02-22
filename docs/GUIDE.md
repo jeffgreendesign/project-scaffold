@@ -159,11 +159,11 @@ If you only tell without enforcing, agents ignore the rules under pressure. If y
 
 ---
 
-### .claude/commands/validate.md
+### .claude/commands/gates.md
 
-**Location:** `scaffold/.claude/commands/validate.md`
+**Location:** `scaffold/.claude/commands/gates.md`
 
-**What it does:** Slash command (`/validate`) that runs all quality gates and reports results. The agent runs `npm run gates` and identifies specific errors if any gate fails.
+**What it does:** Slash command (`/gates`) that runs all quality gates and reports results. The agent runs `npm run gates` and identifies specific errors if any gate fails.
 
 **Why it exists:** Agents sometimes run individual checks and miss others. This command ensures the full suite runs every time, with clear stop-on-failure behavior.
 
@@ -176,7 +176,7 @@ If you only tell without enforcing, agents ignore the rules under pressure. If y
 
 **Common mistakes:**
 
-- Naming it something other than `validate.md` (agents look for standard names)
+- Naming it something other than `gates.md` (agents look for standard names)
 - Referencing individual commands instead of the single `gates` command
 
 ---
@@ -1011,7 +1011,7 @@ The `test_workspace_boundaries.ts` test enforces dependency rules between packag
 
 **When to skip:** Single-package repos. Monorepos where all packages can freely depend on each other (rare but valid).
 
-**Scaling pattern:** For large monorepos (10+ packages), move `WORKSPACE_RULES` to a JSON file and validate it separately:
+**Scaling pattern:** For large monorepos (10+ packages), move `WORKSPACE_RULES` to a JSON file and check it separately:
 
 ```json
 // workspace-rules.json
@@ -1130,11 +1130,12 @@ strategy:
 | `.env.example` | Environment variable documentation | 0 |
 | `config/biome.json` | Linter + formatter config | 1 |
 | `config/tsconfig.json` | Strict TypeScript config | 1 |
+| `config/tsconfig.python-equiv.md` | Python equivalent notes (ruff, mypy, pytest) | Config/notes |
 | `config/.node-version` | Pinned runtime version | 1 |
 | `.husky/pre-commit` | Local quality gate hook | 1 |
 | `.github/workflows/ci.yml` | CI pipeline — runs `gates` | 1 |
 | `NOW.md.template` | Session state tracker | 2 |
-| `.claude/commands/validate.md` | Slash command — run all gates | 2 |
+| `.claude/commands/gates.md` | Slash command — run all gates | 2 |
 | `.claude/commands/new-component.md` | Slash command — create component | 2 |
 | `.claude/hooks/session-start.sh` | Auto-install deps on session start | 2 |
 | `tests/test_architecture.ts` | Import boundary guardrail (TypeScript) | 2 |
@@ -1148,3 +1149,4 @@ strategy:
 | `llms.txt.template` | AI-readable project summary | 3 |
 | `AGENTS.md.template` | External agent integration guide | 3 |
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules | 3 |
+| `.cursor/rules/shell-scripts.mdc` | Cursor IDE rules for shell script conventions and linting | IDE rules |
