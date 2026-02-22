@@ -57,6 +57,15 @@ if [ -d "$TARGET_DIR/.husky" ]; then
   find "$TARGET_DIR/.husky" -type f -exec chmod +x {} \;
 fi
 
+# Detect package manager in target directory for next-steps output
+if [ -f "$TARGET_DIR/pnpm-lock.yaml" ]; then
+  PM_INSTALL="pnpm add -D"; PM_EXEC="pnpm dlx"; PM_RUN="pnpm"
+elif [ -f "$TARGET_DIR/yarn.lock" ]; then
+  PM_INSTALL="yarn add --dev"; PM_EXEC="yarn dlx"; PM_RUN="yarn"
+else
+  PM_INSTALL="npm install --save-dev"; PM_EXEC="npx"; PM_RUN="npm run"
+fi
+
 echo ""
 echo "✓ Scaffold copied to $TARGET_DIR"
 echo ""
@@ -64,8 +73,8 @@ echo "Next steps:"
 echo "  1. Edit CLAUDE.md — replace all [bracketed] values"
 echo "  2. Edit .env.example — add your environment variables"
 echo "  3. Edit .claude/settings.json — adjust allowed commands"
-echo "  4. Run: npm install husky --save-dev && npx husky init"
-echo "  5. Run: npm run gates (verify everything passes)"
+echo "  4. Run: $PM_INSTALL husky && $PM_EXEC husky init"
+echo "  5. Run: $PM_RUN gates (verify everything passes)"
 echo ""
 echo "Optional:"
 echo "  - Edit NOW.md if project will last > 2 weeks"
