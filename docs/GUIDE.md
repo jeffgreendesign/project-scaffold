@@ -204,6 +204,30 @@ If you only tell without enforcing, agents ignore the rules under pressure. If y
 
 ---
 
+### .claude/commands/design.md
+
+**Location:** `scaffold/.claude/commands/design.md`
+
+**What it does:** Slash command (`/design`) that separates thinking from doing. When invoked with a task description (e.g., `/design add cursor-based pagination`), the agent researches the relevant codebase area, identifies reference implementations, and proposes a structured implementation plan — then stops and waits for human approval before writing any code.
+
+**Why it exists:** The most expensive failure mode with AI agents isn't wrong syntax — it's building the wrong thing correctly. An agent that misunderstands a requirement can produce 8 files of implementation in a single turn. Unwinding that is costly. The `/design` command forces a review checkpoint between understanding and implementation.
+
+**Bug it prevents:** Agent refactors 15 files based on a wrong assumption. Agent ignores an existing caching layer because it didn't research the codebase first. Agent duplicates logic that already exists elsewhere. Agent picks a complex approach when a simpler one would do.
+
+**How to customize:**
+
+- Adjust the proposal structure fields for your project's needs
+- Add project-specific research instructions (e.g., "always check the migrations folder before proposing schema changes")
+- The "Do NOT implement" guard is the most important part — keep it prominent
+
+**Common mistakes:**
+
+- Removing the "Do NOT implement" guard (agents will skip straight to code)
+- Using it for single-file changes where it adds unnecessary friction
+- Confusing it with Claude Code's built-in `/plan` mode — `/design` produces a structured research-backed proposal; `/plan` toggles the agent into plan-only mode
+
+---
+
 ### .claude/hooks/session-start.sh
 
 **Location:** `scaffold/.claude/hooks/session-start.sh`
@@ -958,6 +982,38 @@ When describing a code change, use:
 
 ---
 
+### Research-Then-Plan Workflow
+
+For multi-file changes, separate research from implementation using the `/design` command:
+
+```text
+┌───────────┐     ┌───────────┐     ┌───────────┐     ┌───────────┐     ┌───────────┐
+│  RESEARCH  │────▶│  PROPOSE   │────▶│  REVIEW    │────▶│ IMPLEMENT  │────▶│  VERIFY    │
+│            │     │            │     │            │     │            │     │            │
+│ Read code  │     │ Write plan │     │ Human adds │     │ Execute    │     │ Run gates  │
+│ deeply     │     │ with refs  │     │ notes and  │     │ approved   │     │            │
+│            │     │            │     │ corrections│     │ plan       │     │            │
+└───────────┘     └───────────┘     └───────────┘     └───────────┘     └───────────┘
+                                          │
+                                          ▼
+                                    Repeat 1-3x
+                                    until satisfied
+```
+
+**The annotation cycle:** After the agent proposes a plan, review it and add corrections directly:
+- Correct assumptions: *"this should be a PATCH, not a PUT"*
+- Reject approaches: *"remove the caching section, we don't need it here"*
+- Add constraints: *"the signatures of these three functions must not change"*
+- Point to references: *"this table should look exactly like the users table"*
+
+Then send the agent back to revise: "I added notes — update the proposal accordingly. Don't implement yet." This cycle typically repeats 1-3 times. The explicit "don't implement yet" guard is essential — without it, the agent will jump to code the moment it thinks the plan is good enough.
+
+**Reference implementations** are the highest-leverage technique. Instead of describing what you want from scratch, point to existing code: "follow the pattern in `src/routes/users.ts`". Agents are excellent at reproducing patterns from concrete examples. The Reference Implementations table in CLAUDE.md makes this systematic.
+
+**When to skip it:** Single-file changes, typo fixes, documentation updates, and well-understood bug fixes don't need a formal plan. The threshold: if the change touches 3+ files or introduces a pattern the codebase doesn't have yet, use `/design`.
+
+---
+
 ### Decision Trees
 
 Use ASCII flowcharts in CLAUDE.md for common architectural choices:
@@ -1137,6 +1193,7 @@ strategy:
 | `NOW.md.template` | Session state tracker | 2 |
 | `.claude/commands/gates.md` | Slash command — run all gates | 2 |
 | `.claude/commands/new-component.md` | Slash command — create component | 2 |
+| `.claude/commands/design.md` | Slash command — research and propose before implementing | 2 |
 | `.claude/hooks/session-start.sh` | Auto-install deps on session start | 2 |
 | `tests/test_architecture.ts` | Import boundary guardrail (TypeScript) | 2 |
 | `tests/test_architecture.py` | Import boundary guardrail (Python) | 2 |
