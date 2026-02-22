@@ -1,6 +1,9 @@
 # AGENTS.md
 
 <!-- CUSTOMIZE: This file is for Codex/GPT-style agents. Keep it concise and executable. -->
+<!-- Codex 5.3+ reads AGENTS.md automatically before starting work (32 KiB limit). -->
+<!-- Claude Code reads CLAUDE.md instead. Maintain both files if your team uses both tools. -->
+<!-- To make Codex also read CLAUDE.md, add it to project_doc_fallback_filenames in ~/.codex/config.toml -->
 
 ## Scope
 
