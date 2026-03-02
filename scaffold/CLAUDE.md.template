@@ -29,6 +29,7 @@
 | **All checks**  | **`[pnpm gates]`**             |
 | Node targets    | [>= 22 / >= 20 / >= 18]       |
 | TS target       | [ESNext / ES2022 / etc.]       |
+| Version floors  | `config/version-floors.json`   |
 
 <!-- CUSTOMIZE: The compatibility matrix (Node targets, TS target) matters. -->
 <!-- Agents will "modernize" syntax and silently drop support for older runtimes -->
@@ -115,6 +116,7 @@ Most tasks start in `src/`. Key entry points:
 
 These will fail the build:
 
+- Using a framework version below the security floor (see `config/version-floors.json`) — Vercel will block deployment
 - [Mistake 1]
 - [Mistake 2]
 
@@ -164,6 +166,7 @@ These choices are intentional. Do not suggest alternatives unless explicitly ask
 
 - **[Tool] over [Alternative]**: [Reason]
 - **[Tool] over [Alternative]**: [Reason]
+- **Version floor enforcement**: `scripts/version-floor-check.sh` checks installed versions against `config/version-floors.json`. Do not downgrade framework versions without checking the floors file first.
 
 ## Data Integrity Rules
 
