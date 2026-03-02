@@ -482,6 +482,68 @@ npm run typecheck
 
 ---
 
+### scripts/version-floor-check.sh
+
+**Location:** `scaffold/scripts/version-floor-check.sh`
+
+**What it does:** Checks installed dependency versions against minimum safe versions defined in `config/version-floors.json`. Non-blocking by default (exits 0 with warnings). Use `--strict` to fail on violations.
+
+**Why it exists:** Vercel now blocks deployments of vulnerable Next.js and next-mdx-remote versions. React Server Components had a CVSS 10.0 RCE (React2Shell) that was actively exploited in the wild. Developers can work all day on a vulnerable version and only discover it at deploy time. This check catches it in `gates`/pre-commit instead.
+
+**Bug it prevents:** Deploying applications with known critical CVEs. Vercel deployment failures from vulnerable framework versions. Running servers with RCE, auth bypass, or DoS vulnerabilities.
+
+**What it checks:**
+
+| Package | Risk |
+|---------|------|
+| `next` | React2Shell RCE, middleware auth bypass, DoS |
+| `react-server-dom-webpack` | RSC RCE (CVSS 10.0), DoS |
+| `react-server-dom-parcel` | RSC RCE (CVSS 10.0), DoS |
+| `react-server-dom-turbopack` | RSC RCE (CVSS 10.0), DoS |
+| `next-mdx-remote` | Arbitrary code execution via untrusted MDX |
+
+**How to customize:**
+
+- Add new packages to `config/version-floors.json` when CVEs drop
+- Use the `overrides` section to document accepted risks with expiry dates
+- Delete `config/version-floors.json` if your project doesn't use any monitored packages
+- Add `bash scripts/version-floor-check.sh --strict` to your `gates` script
+
+**Common mistakes:**
+
+- Not updating `version-floors.json` when new CVEs are published (check `_updated` timestamp)
+- Setting a permanent override without an expiry date
+- Forgetting to run `gates` before pushing — Vercel will reject the deploy anyway
+
+---
+
+### config/version-floors.json
+
+**Location:** `scaffold/config/version-floors.json`
+
+**What it does:** Data file defining minimum safe versions for framework dependencies with known critical CVEs. Machine-parseable by `version-floor-check.sh`, the health audit workflow, and the cross-repo alignment workflow.
+
+**Why it exists:** Separates version floor data from enforcement logic. When a new CVE drops, you edit one JSON file — no script changes needed. The `_updated` timestamp lets workflows detect stale floors across repos.
+
+**How to customize:**
+
+- Delete packages your project doesn't use (or leave them — the script skips packages not in `package.json`)
+- Add project-specific packages with known vulnerability floors
+- Use the `overrides` section to temporarily accept risk:
+
+```json
+{
+  "overrides": {
+    "next": {
+      "accepted_risk": "Pinned to 15.2.7 until migration completes (tracked in #123)",
+      "expires": "2026-04-01"
+    }
+  }
+}
+```
+
+---
+
 ### scripts/doc-sync-check.sh
 
 **Location:** `scaffold/scripts/doc-sync-check.sh`
@@ -1202,6 +1264,8 @@ strategy:
 | `.github/workflows/changelog-check.yml` | Changelog enforcement | 2 |
 | `CHANGELOG.md` | Changelog starter | 2 |
 | `scripts/security-check.sh` | Pre-commit security scanner | 2 |
+| `scripts/version-floor-check.sh` | Minimum safe version enforcement | 2 |
+| `config/version-floors.json` | CVE-based version floor data | 2 |
 | `scripts/doc-sync-check.sh` | Documentation drift detection | 2 |
 | `llms.txt.template` | AI-readable project summary | 3 |
 | `AGENTS.md.template` | External agent integration guide | 3 |

@@ -82,7 +82,9 @@ Every file in `scaffold/` with its purpose:
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules for TypeScript conventions |
 | `.cursor/rules/shell-scripts.mdc` | Cursor IDE rules for shell script conventions and linting |
 | `scripts/security-check.sh` | Pre-commit security scanner (path traversal, secrets, eval) |
+| `scripts/version-floor-check.sh` | Minimum safe version enforcement for framework dependencies |
 | `scripts/doc-sync-check.sh` | Documentation drift detection |
+| `config/version-floors.json` | Minimum safe dependency versions (CVE-based, Vercel-enforced) |
 | `config/biome.json` | Biome linter + formatter config (strict, tabs, single quotes) |
 | `config/tsconfig.json` | Strict TypeScript config |
 | `config/tsconfig.python-equiv.md` | Python equivalent notes (ruff, mypy, pytest) |
