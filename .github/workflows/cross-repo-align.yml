@@ -1,0 +1,186 @@
+# Cross-repo alignment check
+# Compares dependency versions across all active projects and creates
+# issues in each repo that needs alignment.
+#
+# Setup required:
+#   1. Create a fine-grained PAT with contents:read + issues:write on all target repos
+#   2. Store it as REPO_AUDIT_TOKEN in this repo's secrets
+#   3. Store ANTHROPIC_API_KEY in this repo's secrets
+
+name: Cross-Repo Alignment
+
+on:
+  schedule:
+    - cron: '0 15 * * 1' # Monday 10am ET (runs after per-repo improve workflows)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - owner: jeffgreendesign
+            repo: textrawl
+            pm: pnpm
+          - owner: logpare
+            repo: logpare
+            pm: pnpm
+          - owner: logpare
+            repo: logpare-mcp
+            pm: pnpm
+          - owner: jeffgreendesign
+            repo: guardrail-sim
+            pm: pnpm
+          - owner: keelpath
+            repo: ecom-insights-platform
+            pm: npm
+          - owner: jeffgreendesign
+            repo: hire-jeff-green-nextjs
+            pm: npm
+
+    steps:
+      - name: Checkout ${{ matrix.repo }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.owner }}/${{ matrix.repo }}
+          token: ${{ secrets.REPO_AUDIT_TOKEN }}
+
+      - name: Extract dependency info
+        run: |
+          # Save package.json and key metadata as an artifact
+          mkdir -p repo-info
+          cp package.json repo-info/package.json
+
+          # Extract key fields into a summary
+          node -e "
+            const pkg = require('./package.json');
+            const info = {
+              name: '${{ matrix.repo }}',
+              owner: '${{ matrix.owner }}',
+              pm: '${{ matrix.pm }}',
+              nodeEngine: pkg.engines?.node || 'not specified',
+              packageManager: pkg.packageManager || 'not specified',
+              typescript: pkg.devDependencies?.typescript || pkg.dependencies?.typescript || 'none',
+              deps: pkg.dependencies || {},
+              devDeps: pkg.devDependencies || {},
+              overrides: pkg.pnpm?.overrides || pkg.overrides || {},
+              hasDependabot: false,
+              hasCodeQL: false,
+              versionFloorsUpdated: '',
+            };
+            require('fs').writeFileSync('repo-info/summary.json', JSON.stringify(info, null, 2));
+          "
+
+          # Check configs
+          [ -f ".github/dependabot.yml" ] && node -e "
+            const s = require('./repo-info/summary.json');
+            s.hasDependabot = true;
+            require('fs').writeFileSync('./repo-info/summary.json', JSON.stringify(s, null, 2));
+          " || true
+
+          ls .github/workflows/codeql* 1>/dev/null 2>&1 && node -e "
+            const s = require('./repo-info/summary.json');
+            s.hasCodeQL = true;
+            require('fs').writeFileSync('./repo-info/summary.json', JSON.stringify(s, null, 2));
+          " || true
+
+          [ -f "config/version-floors.json" ] && node -e "
+            const s = require('./repo-info/summary.json');
+            const floors = require('./config/version-floors.json');
+            s.versionFloorsUpdated = floors._updated || 'unknown';
+            require('fs').writeFileSync('./repo-info/summary.json', JSON.stringify(s, null, 2));
+          " || true
+
+      - name: Upload repo info
+        uses: actions/upload-artifact@v4
+        with:
+          name: info-${{ matrix.repo }}
+          path: repo-info/
+          retention-days: 1
+
+  analyze:
+    needs: collect
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all repo info
+        uses: actions/download-artifact@v4
+        with:
+          pattern: info-*
+          merge-multiple: false
+
+      - name: Combine summaries
+        run: |
+          echo "[" > all-summaries.json
+          first=true
+          for dir in info-*/; do
+            if [ -f "$dir/summary.json" ]; then
+              if [ "$first" = true ]; then
+                first=false
+              else
+                echo "," >> all-summaries.json
+              fi
+              cat "$dir/summary.json" >> all-summaries.json
+            fi
+          done
+          echo "]" >> all-summaries.json
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are a cross-repo alignment agent. You have dependency data from
+            6 active projects owned by the same developer.
+
+            Read the file `all-summaries.json` which contains package.json data
+            from all projects.
+
+            ## Analysis tasks:
+
+            ### 1. Shared dependency version drift
+            Find packages that appear in multiple repos at different versions.
+            Focus on: typescript, @modelcontextprotocol/sdk, express, vitest,
+            eslint, prettier, @types/node, and any other shared deps.
+
+            ### 2. Package manager alignment
+            Check if pnpm versions (from packageManager field) are consistent.
+            Flag any repos still on pnpm 9 vs 10.
+
+            ### 3. Node engine alignment
+            Compare Node.js engine requirements across repos.
+            Recommend a consistent minimum.
+
+            ### 4. Security config gaps
+            Flag repos missing Dependabot or CodeQL.
+
+            ### 5. Override staleness
+            List all pnpm.overrides/overrides across repos. Recommend checking
+            if each is still needed.
+
+            ### 6. Version floor adoption
+            Check the versionFloorsUpdated field for each repo. Flag repos that:
+            - Don't have version-floors.json (empty versionFloorsUpdated)
+            - Have a stale _updated timestamp (older than 30 days)
+            Compare against the scaffold's canonical floors at 2026-03-01.
+
+            ## Output:
+            Create a GitHub issue in THIS repo (use `gh issue create`) titled
+            "Cross-repo alignment report — YYYY-MM-DD" with:
+            - A table showing each shared dep and its version per repo
+            - Specific recommendations for what to align and to which version
+            - A priority order (security first, then core deps, then tooling)
+
+            Use `gh issue create --title "..." --body "..."` to create the issue.
+
+          claude_args: |
+            --allowedTools "Read,Bash(gh:*),Bash(cat:*),Bash(node:*),Glob,Grep"

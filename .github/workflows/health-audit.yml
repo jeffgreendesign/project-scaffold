@@ -1,0 +1,186 @@
+# Cross-repo health audit
+# Runs weekly and produces a consolidated dependency/security report
+# as a GitHub Issue in this repository.
+#
+# Setup required:
+#   1. Create a fine-grained PAT with contents:read on all target repos
+#   2. Store it as REPO_AUDIT_TOKEN in this repo's secrets
+#   3. Enable Issues on this repo
+
+name: Weekly Repo Health Audit
+
+on:
+  schedule:
+    - cron: '0 14 * * 1' # Monday 9am ET (14:00 UTC)
+  workflow_dispatch: # Manual trigger
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - owner: jeffgreendesign
+            repo: textrawl
+            pm: pnpm
+          - owner: logpare
+            repo: logpare
+            pm: pnpm
+          - owner: logpare
+            repo: logpare-mcp
+            pm: pnpm
+          - owner: jeffgreendesign
+            repo: guardrail-sim
+            pm: pnpm
+          - owner: keelpath
+            repo: ecom-insights-platform
+            pm: npm
+          - owner: jeffgreendesign
+            repo: hire-jeff-green-nextjs
+            pm: npm
+
+    steps:
+      - name: Checkout ${{ matrix.repo }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.owner }}/${{ matrix.repo }}
+          token: ${{ secrets.REPO_AUDIT_TOKEN }}
+
+      - name: Setup pnpm
+        if: matrix.pm == 'pnpm'
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: ${{ matrix.pm }}
+
+      - name: Install dependencies
+        run: |
+          if [ "${{ matrix.pm }}" = "pnpm" ]; then
+            pnpm install --frozen-lockfile 2>&1 || pnpm install --no-frozen-lockfile 2>&1
+          else
+            npm ci 2>&1 || npm install 2>&1
+          fi
+
+      - name: Generate audit report
+        id: report
+        run: |
+          REPORT_FILE="audit-report.md"
+
+          # Header
+          echo "### ${{ matrix.repo }}" > "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+          echo "**Owner:** \`${{ matrix.owner }}\` | **Package manager:** \`${{ matrix.pm }}\`" >> "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+
+          # Node engine requirement
+          NODE_ENGINE=$(node -e "try{const p=require('./package.json');console.log(p.engines?.node||'not specified')}catch(e){console.log('not specified')}")
+          PM_VERSION=$(node -e "try{const p=require('./package.json');console.log(p.packageManager||'not specified')}catch(e){console.log('not specified')}")
+          echo "**Node engine:** \`$NODE_ENGINE\` | **packageManager:** \`$PM_VERSION\`" >> "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+
+          # Outdated dependencies
+          echo "<details><summary>Outdated dependencies</summary>" >> "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+          echo '```' >> "$REPORT_FILE"
+          if [ "${{ matrix.pm }}" = "pnpm" ]; then
+            pnpm outdated 2>&1 >> "$REPORT_FILE" || echo "All dependencies up to date" >> "$REPORT_FILE"
+          else
+            npm outdated 2>&1 >> "$REPORT_FILE" || echo "All dependencies up to date" >> "$REPORT_FILE"
+          fi
+          echo '```' >> "$REPORT_FILE"
+          echo "</details>" >> "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+
+          # Security audit
+          echo "<details><summary>Security audit</summary>" >> "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+          echo '```' >> "$REPORT_FILE"
+          if [ "${{ matrix.pm }}" = "pnpm" ]; then
+            pnpm audit 2>&1 >> "$REPORT_FILE" || true
+          else
+            npm audit 2>&1 >> "$REPORT_FILE" || true
+          fi
+          echo '```' >> "$REPORT_FILE"
+          echo "</details>" >> "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+
+          # Version floor check
+          if [ -f "scripts/version-floor-check.sh" ] && [ -f "config/version-floors.json" ]; then
+            echo "<details><summary>Version floor check</summary>" >> "$REPORT_FILE"
+            echo "" >> "$REPORT_FILE"
+            echo '```' >> "$REPORT_FILE"
+            bash scripts/version-floor-check.sh --strict 2>&1 >> "$REPORT_FILE" || true
+            echo '```' >> "$REPORT_FILE"
+            echo "</details>" >> "$REPORT_FILE"
+            echo "" >> "$REPORT_FILE"
+          fi
+
+          # Configuration checks
+          echo "**Config health:**" >> "$REPORT_FILE"
+          [ -f ".github/dependabot.yml" ] && echo "- [x] Dependabot" >> "$REPORT_FILE" || echo "- [ ] Dependabot" >> "$REPORT_FILE"
+          ls .github/workflows/codeql* 1>/dev/null 2>&1 && echo "- [x] CodeQL" >> "$REPORT_FILE" || echo "- [ ] CodeQL" >> "$REPORT_FILE"
+          ls .github/workflows/scorecard* 1>/dev/null 2>&1 && echo "- [x] OpenSSF Scorecard" >> "$REPORT_FILE" || echo "- [ ] OpenSSF Scorecard" >> "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+
+          # Check for security overrides
+          OVERRIDES=$(node -e "try{const p=require('./package.json');const o=p.pnpm?.overrides||p.overrides||{};const k=Object.keys(o);if(k.length)console.log(k.map(k=>k+'='+o[k]).join(', '));else console.log('none')}catch(e){console.log('none')}")
+          if [ "$OVERRIDES" != "none" ]; then
+            echo "**Security overrides (check if still needed):** \`$OVERRIDES\`" >> "$REPORT_FILE"
+            echo "" >> "$REPORT_FILE"
+          fi
+
+          echo "---" >> "$REPORT_FILE"
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-${{ matrix.repo }}
+          path: audit-report.md
+          retention-days: 7
+
+  report:
+    needs: audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: audit-*
+          merge-multiple: false
+
+      - name: Consolidate reports
+        run: |
+          REPORT="consolidated-report.md"
+          DATE=$(date +%Y-%m-%d)
+
+          echo "# Repo Health Report — $DATE" > "$REPORT"
+          echo "" >> "$REPORT"
+          echo "Automated weekly audit of active projects." >> "$REPORT"
+          echo "" >> "$REPORT"
+
+          for dir in audit-*/; do
+            if [ -f "$dir/audit-report.md" ]; then
+              cat "$dir/audit-report.md" >> "$REPORT"
+              echo "" >> "$REPORT"
+            fi
+          done
+
+          echo "" >> "$REPORT"
+          echo "*Generated by [health-audit.yml](../../.github/workflows/health-audit.yml)*" >> "$REPORT"
+
+      - name: Create GitHub Issue
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: 'Repo Health Report — ${{ github.run_id }}'
+          content-filepath: consolidated-report.md
+          labels: automated,health-report
