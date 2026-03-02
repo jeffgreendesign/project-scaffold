@@ -13,5 +13,10 @@ else
   PM_RUN="npm run"
 fi
 
+# Version floor check (if configured)
+if [ -f "config/version-floors.json" ] && [ -f "scripts/version-floor-check.sh" ]; then
+  bash scripts/version-floor-check.sh
+fi
+
 $PM_RUN lint
 $PM_RUN typecheck
