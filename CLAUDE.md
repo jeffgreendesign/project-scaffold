@@ -1,55 +1,101 @@
-# CLAUDE.md — project-scaffold
+# CLAUDE.md
 
-This repo IS the scaffold template. When editing, you're editing the templates
-other projects will use.
+## Project Overview
+
+This repository is a reusable scaffold for AI-assisted development workflows. It ships template files under `scaffold/` and supporting scripts/docs in the root so downstream projects can quickly adopt consistent agent instructions, quality gates, and delivery guardrails.
+
+## Workflow
+
+- **Small changes**: implement directly.
+- **Multi-file changes/new patterns**: create a short plan first, then implement.
+- Always run `pnpm verify` before finishing.
+
+## Quick Reference
+
+| Aspect          | Value |
+|-----------------|-------|
+| Package manager | pnpm |
+| Runtime         | Node.js >= 22 |
+| Language        | Bash + Markdown + template TypeScript config |
+| Framework       | N/A in this scaffold repo (templates target multiple stacks) |
+| Lint            | `pnpm lint` |
+| Type check      | `pnpm typecheck` |
+| Test            | `pnpm test` |
+| Build           | `pnpm build` |
+| **All checks**  | **`pnpm verify`** |
 
 ## Development Commands
 
 ```bash
-# Validate all template files have required sections
-./scripts/check-templates.sh
+# Placeholder dev command for this template repository
+pnpm dev
 
-# Test the scaffold script
-./scripts/scaffold.sh /tmp/test-project
+# Full verification gate
+pnpm verify
 
-# Regenerate the single-file distribution
-./scripts/generate-init.sh
-
-# Verify scaffold.sh and init.sh produce identical output
-diff <(./scripts/scaffold.sh /tmp/test-a 2>&1) <(./scripts/init.sh /tmp/test-b 2>&1)
-
-# Lint markdown
-npx markdownlint-cli2 "**/*.md"
+# Individual checks
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
 ## Architecture
 
-- `scaffold/` — Template files that get copied into target projects
-- `docs/` — Guide documentation (stays in this repo, not copied)
-- `scripts/scaffold.sh` — Copies scaffold/ into a target directory
-- `scripts/init.sh` — Single-file distribution (generated, do not edit directly)
-- `scripts/generate-init.sh` — Builds init.sh from scaffold/ contents
+### Key Systems
 
-## Rules
+- `scaffold/`: files copied into downstream repositories.
+- `scripts/`: validation, scaffold generation, and packaging helpers.
+- `docs/`: long-form guidance for maintainers of this scaffold.
 
-- Every template file must have `<!-- CUSTOMIZE -->` comments on sections that need editing
-- Every scaffold file must be documented in docs/GUIDE.md
-- README.md must list every scaffold file with its purpose
-- Template files use [brackets] for placeholder values
-- Non-template files (settings.json, CI workflows) should work with minimal changes
-- The canonical gate command is `gates`. Never use `quality`, `validate`, `check`, or `claude:gates` anywhere.
-- After changing any scaffold/ file, regenerate init.sh with `./scripts/generate-init.sh`
-- All shell scripts must pass `bash -n <file>` syntax check before committing
-- After changing generate-init.sh, regenerate init.sh and verify with `bash -n scripts/init.sh`
-- Package-manager code must handle npm, pnpm, and yarn (including Yarn v1 vs v2+ for `dlx`)
-- Never hardcode `npm`/`npx`/`pnpm`/`yarn` in user-facing output — use detection variables (PKG_MANAGER, PM_RUN, PM_INSTALL, PM_EXEC)
-- Quote all `case` patterns containing `#` or `*` to prevent shell parsing issues (e.g., `"#"*` not `#*`)
+### Directory Map
 
-## Permissions
+```text
+scaffold/    # installable template files
+scripts/     # shell automation for validation/generation
+docs/        # maintainer-facing documentation
+```
 
-The `.claude/settings.json` in scaffold/ pre-approves these commands:
+### Starting Points
 
-- `allow`: Safe read-only and build commands. The LLM runs these without asking.
-- `deny`: Destructive operations. Structurally blocked.
-- `git push` is intentionally NOT in allow — you want to review before pushing.
-- `npm install` is intentionally NOT in allow — review new dependencies.
+| Task | Start Here | Why |
+|------|------------|-----|
+| Update template behavior | `scaffold/` | Source-of-truth files used by consumers |
+| Update generation logic | `scripts/generate-init.sh` | Controls generated installer output |
+| Update maintainer guidance | `docs/AX_UPGRADE_REPORT.md` | Tracks AX upgrade inventory and decisions |
+
+## Code Conventions
+
+### Shell + Template Safety
+
+**Rule:** Keep shell scripts POSIX-safe Bash and syntax-check them.
+**Bug it prevents:** Installer failures and broken generation pipelines.
+
+### Documentation Integrity
+
+**Rule:** If template behavior changes, update corresponding docs in `docs/`.
+**Bug it prevents:** Drift that confuses agents and humans.
+
+## Common Mistakes
+
+### Build Breakers
+
+- Editing `scaffold/` without re-running `scripts/generate-init.sh`.
+- Introducing commands that assume npm/yarn when the standard gate is `pnpm verify`.
+
+### Silent Bugs
+
+- Missing official-doc links for Vercel/Supabase guidance.
+- Documenting env vars without noting server vs client boundaries.
+
+## Environment Variables
+
+This repository itself has no required runtime environment variables for local maintenance workflows.
+
+## Documentation Sync Rules
+
+When updating Vercel/Supabase guidance, also update:
+- `docs/ENV.md`
+- `docs/RUNBOOK.md`
+- `docs/ARCHITECTURE.md`
+- `docs/AX_UPGRADE_REPORT.md`

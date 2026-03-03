@@ -5,7 +5,7 @@
 # Design choices:
 # - Uses dorny/paths-filter to skip CI on docs-only changes (saves minutes)
 # - Reads Node version from .node-version (single source of truth for runtime)
-# - Final step runs `npm run gates` — the same command developers run locally
+# - Final step runs `npm run verify` — the same command developers run locally
 #   and in pre-commit hooks. One command, everywhere, no drift.
 # - 10-minute timeout prevents hung processes from burning Actions minutes
 # ============================================================================
@@ -99,5 +99,5 @@ jobs:
       # Run the single quality gate command.
       # This is the same command as pre-commit hooks and local dev.
       # CI should never run different checks than local — one command everywhere.
-      - name: Run quality gates
-        run: ${{ steps.pkg-manager.outputs.manager }} run gates
+      - name: Run verify gate
+        run: ${{ steps.pkg-manager.outputs.manager }} run verify

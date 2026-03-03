@@ -308,29 +308,32 @@ globs: ["src/**/*.ts", "src/**/*.tsx"]
 SCAFFOLD_EOF__CURSOR_RULES_TYPESCRIPT_MDC_7f3d9a
 
 write_file '.env.example' << 'SCAFFOLD_EOF__ENV_EXAMPLE_7f3d9a'
-# =============================================================================
-# Environment Variables
-# =============================================================================
-# Copy this file to .env and fill in the values.
-# NEVER commit .env to version control.
+# ============================================================================
+# Environment Variables (Vercel + Supabase baseline)
+# ============================================================================
+# Copy to .env.local for local development.
+# Never commit real secrets.
 #
-# CUSTOMIZE: Add all environment variables your project uses.
-# Mark each as REQUIRED or OPTIONAL.
-# Include valid value examples or ranges.
-# =============================================================================
+# Official docs:
+# - Vercel env vars: https://vercel.com/docs/environment-variables
+# - Supabase API keys: https://supabase.com/docs/guides/api/api-keys
+# - Supabase Next.js SSR auth: https://supabase.com/docs/guides/auth/server-side/nextjs
+# ============================================================================
 
-# Server (REQUIRED)
-PORT=3000
+# App runtime
 NODE_ENV=development
+PORT=3000
 
-# Database (REQUIRED)
-DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+# Supabase (public)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
-# Authentication (REQUIRED for production)
-# API_KEY=your-api-key-here
+# Supabase (server-only, optional unless doing admin/server jobs)
+# SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+# SUPABASE_ACCESS_TOKEN=your-supabase-cli-access-token
 
-# Feature Flags (OPTIONAL)
-# ENABLE_DEBUG=false
+# Vercel system env vars are automatically provided in hosted environments
+# VERCEL_ENV=development
 
 SCAFFOLD_EOF__ENV_EXAMPLE_7f3d9a
 
@@ -405,7 +408,7 @@ write_file '.github/workflows/ci.yml' << 'SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML_
 # Design choices:
 # - Uses dorny/paths-filter to skip CI on docs-only changes (saves minutes)
 # - Reads Node version from .node-version (single source of truth for runtime)
-# - Final step runs `npm run gates` — the same command developers run locally
+# - Final step runs `npm run verify` — the same command developers run locally
 #   and in pre-commit hooks. One command, everywhere, no drift.
 # - 10-minute timeout prevents hung processes from burning Actions minutes
 # ============================================================================
@@ -499,8 +502,8 @@ jobs:
       # Run the single quality gate command.
       # This is the same command as pre-commit hooks and local dev.
       # CI should never run different checks than local — one command everywhere.
-      - name: Run quality gates
-        run: ${{ steps.pkg-manager.outputs.manager }} run gates
+      - name: Run verify gate
+        run: ${{ steps.pkg-manager.outputs.manager }} run verify
 
 SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML_7f3d9a
 
@@ -524,6 +527,8 @@ fi
 if [ -f "config/version-floors.json" ] && [ -f "scripts/version-floor-check.sh" ]; then
   bash scripts/version-floor-check.sh
 fi
+
+bash scripts/security-check.sh --strict
 
 $PM_RUN lint
 $PM_RUN typecheck

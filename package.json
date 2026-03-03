@@ -1,0 +1,13 @@
+{
+  "name": "project-scaffold",
+  "private": true,
+  "packageManager": "pnpm@10.6.0",
+  "scripts": {
+    "dev": "echo 'project-scaffold is a template repository; use scripts/scaffold.sh to bootstrap a runnable app.'",
+    "lint": "./scripts/check-templates.sh",
+    "typecheck": "bash -n scripts/*.sh scaffold/scripts/*.sh",
+    "test": "./scripts/scaffold.sh /tmp/project-scaffold-smoke > /tmp/project-scaffold-smoke.log",
+    "build": "./scripts/generate-init.sh && bash -n scripts/init.sh",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  }
+}
