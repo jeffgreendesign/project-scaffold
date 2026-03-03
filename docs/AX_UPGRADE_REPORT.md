@@ -40,7 +40,7 @@
 - `pnpm install` — installs local tooling (none required beyond scripts).
 - `pnpm dev` — runs a no-op dev command for scaffold maintenance context.
 - `pnpm verify` — runs lint + typecheck + test + build scripts.
-- `bash scaffold/scripts/security-check.sh --strict` (in generated projects) — blocks commits on common secret/security mistakes.
+- `bash scripts/security-check.sh --strict` (in generated projects) — blocks commits on common secret/security mistakes.
 - `./scripts/scaffold.sh /tmp/ax-template-check` — validates template copy behavior.
 
 Expected outcomes:

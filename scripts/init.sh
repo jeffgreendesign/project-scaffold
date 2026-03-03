@@ -325,8 +325,8 @@ NODE_ENV=development
 PORT=3000
 
 # Supabase (public)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 
 # Supabase (server-only, optional unless doing admin/server jobs)
 # SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
@@ -408,8 +408,8 @@ write_file '.github/workflows/ci.yml' << 'SCAFFOLD_EOF__GITHUB_WORKFLOWS_CI_YML_
 # Design choices:
 # - Uses dorny/paths-filter to skip CI on docs-only changes (saves minutes)
 # - Reads Node version from .node-version (single source of truth for runtime)
-# - Final step runs `npm run verify` — the same command developers run locally
-#   and in pre-commit hooks. One command, everywhere, no drift.
+# - Final step runs `npm run verify` for full CI validation
+# - Pre-commit runs strict security checks + lint + typecheck directly (faster local feedback)
 # - 10-minute timeout prevents hung processes from burning Actions minutes
 # ============================================================================
 
@@ -499,9 +499,9 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.pkg-manager.outputs.install }}
 
-      # Run the single quality gate command.
-      # This is the same command as pre-commit hooks and local dev.
-      # CI should never run different checks than local — one command everywhere.
+      # Run the single CI gate command.
+      # Pre-commit runs `bash scripts/security-check.sh --strict`, `lint`, and `typecheck` directly.
+      # CI runs `verify` to execute the full suite together (lint + typecheck + test + build).
       - name: Run verify gate
         run: ${{ steps.pkg-manager.outputs.manager }} run verify
 
@@ -2538,7 +2538,8 @@ setup_gates() {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build": "echo 'Add your build command'",
-    "gates": "$run_cmd lint && $run_cmd typecheck && $run_cmd test && $run_cmd build"
+    "gates": "$run_cmd lint && $run_cmd typecheck && $run_cmd test && $run_cmd build",
+    "verify": "$run_cmd gates"
   }
 }
 PKGJSON

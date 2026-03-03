@@ -158,7 +158,8 @@ setup_gates() {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build": "echo 'Add your build command'",
-    "gates": "$run_cmd lint && $run_cmd typecheck && $run_cmd test && $run_cmd build"
+    "gates": "$run_cmd lint && $run_cmd typecheck && $run_cmd test && $run_cmd build",
+    "verify": "$run_cmd gates"
   }
 }
 PKGJSON

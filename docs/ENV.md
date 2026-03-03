@@ -20,8 +20,8 @@ This scaffold recommends splitting environment variables into:
 ## Rules
 
 1. Never expose `SUPABASE_SERVICE_ROLE_KEY` in client bundles.
-2. Keep `.env*` files out of Git.
-3. Keep `.env.example` documented with safe placeholders only.
+2. Keep local `.env*` files (for example: `.env`, `.env.local`, `.env.development`) out of Git — do not ignore the tracked `.env.example` template.
+3. Keep `.env.example` committed with safe placeholder values only (never real secrets).
 
 ## Official references
 
