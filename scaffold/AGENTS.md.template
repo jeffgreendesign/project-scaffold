@@ -14,7 +14,7 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 - **What this repo is:** [One sentence]
 - **Primary stack:** [TypeScript / Python / mixed]
 - **Package manager:** [pnpm / npm / yarn / pip]
-- **Canonical quality gate:** `[pnpm gates]`
+- **Canonical quality gate:** `[pnpm gates]` (alias: `[pnpm verify]`)
 
 ## First Commands To Run
 
@@ -48,6 +48,13 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 - `CLAUDE.md` — deep repo conventions and architecture
 - `NOW.md` — current sprint status and next actions
 - `docs/` — long-form decisions and implementation guides
+
+## Official References
+
+<!-- CUSTOMIZE: Add links relevant to your project's stack. -->
+
+- Vercel agent resources: https://vercel.com/docs/agent-resources
+- Vercel agent skills: https://vercel.com/docs/agent-resources/skills
 
 ## Optional: External API Usage Guide
 
