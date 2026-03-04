@@ -15,7 +15,7 @@ This scaffold recommends splitting environment variables into:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Recommended (or use publishable key) | Client + Server | Public anonymous key — safe for client use; see publishable keys section for newer alternative |
 | `SUPABASE_SERVICE_ROLE_KEY` | Optional (server jobs/admin only) | Server-only | Elevated access for trusted backend tasks — **never expose in client bundles** |
 | `SUPABASE_ACCESS_TOKEN` | Optional | Local CLI/CI | Token for Supabase CLI operations |
-| `POSTGRES_URL` | Optional (migration workflows) | Server/CI | Pooled Postgres connection string for ORM/query use |
+| `POSTGRES_URL` | Optional (runtime/pooled queries) | Server/CI | Pooled Postgres connection string for ORM/query use at runtime |
 | `POSTGRES_URL_NON_POOLING` | Optional (migration workflows) | Server/CI | Direct Postgres connection for schema migrations |
 | `VERCEL_ENV` | Provided by Vercel | Server | Runtime env (`development`, `preview`, `production`) |
 | `VERCEL_PROJECT_PRODUCTION_URL` | Provided by Vercel | Server | Shortest production domain — useful for OG images and canonical URLs |

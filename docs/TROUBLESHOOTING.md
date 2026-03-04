@@ -20,7 +20,7 @@
 ## Supabase migration drift
 
 - If local migrations don't match the remote project, run `supabase db pull` to capture remote schema.
-- If a preview branch has stale migrations, delete and recreate the branch (`supabase db reset` equivalent).
+- `supabase db reset` resets the **local** development database only. For a stale hosted preview branch, either link the CLI (`supabase link`) and run `supabase db reset --linked`, or delete and recreate the preview branch in the dashboard.
 - Use `supabase db diff --schema public` to compare local dashboard changes against migration files.
 - Always run `supabase migration up` (not manual SQL) to apply changes locally.
 

@@ -12,7 +12,7 @@
 
 - **Small changes** (single file, typo, bug fix): implement directly
 - **Multi-file changes or new patterns** (3+ files, new subsystem, unfamiliar area): use `/design` to research the codebase and propose an approach before implementing — wait for approval before writing code
-- Always run `[pnpm gates]` before finishing any task
+- Always run `verify` (or `[pnpm gates]`) before finishing any task
 
 ## Quick Reference
 
@@ -45,7 +45,7 @@
 [pnpm dev]
 
 # Quality gates (run before every commit)
-[pnpm gates]
+[pnpm gates]   # alias: verify
 
 # Individual checks
 [pnpm lint]
@@ -117,7 +117,7 @@ Most tasks start in `src/`. Key entry points:
 These will fail the build:
 
 - Using a framework version below the security floor (see `config/version-floors.json`) — Vercel will block deployment
-- Missing `export const maxDuration = N;` on Vercel function routes that exceed the default timeout (10s Hobby / 60s Pro) — see https://vercel.com/docs/functions
+- Missing `export const maxDuration = N;` on Vercel function routes that need a custom timeout — Fluid Compute (enabled by default) sets a 300s default on all plans; legacy defaults without Fluid Compute were 10s Hobby / 60s Pro — see https://vercel.com/docs/functions
 - [Mistake 1]
 - [Mistake 2]
 
@@ -145,7 +145,7 @@ These won't fail the build but cause problems:
    [minimal template]
    ```
 
-4. Run `[pnpm gates]`
+4. Run `verify` (or `[pnpm gates]`)
 
 ### New Database Migration (Supabase)
 
