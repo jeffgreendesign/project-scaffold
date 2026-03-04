@@ -11,6 +11,7 @@
 # - Hardcoded secrets: API keys, tokens, passwords in source
 # - eval() usage: code injection risk
 # - SQL string interpolation: SQL injection risk
+# - Supabase service-role key usage in client component paths
 #
 # Usage:
 #   ./scripts/security-check.sh              # Warn only (exit 0)
@@ -112,6 +113,27 @@ for file in $FILES; do
     # Catches template literals and f-strings used in SQL-like contexts
     if echo "$line" | grep -qE "(SELECT|INSERT|UPDATE|DELETE|DROP|ALTER).*(\\\$\{|\" *\+|f['\"])" 2>/dev/null; then
       warn "SQL string interpolation — use parameterized queries" "$file" "$LINE_NUM"
+    fi
+
+    # --- Supabase Service-Role Key in Client Paths ---
+    # The service-role key bypasses RLS and must never be used in client bundles.
+    # See: https://supabase.com/docs/guides/api/api-keys
+    if echo "$line" | grep -qE "SUPABASE_SERVICE_ROLE_KEY" 2>/dev/null; then
+      IS_CLIENT_FILE=false
+      case "$file" in
+        */app/*|*/pages/*|*components/*) IS_CLIENT_FILE=true ;;
+      esac
+      # Also check if file contains "use client" directive in first 5 lines
+      if [ "$IS_CLIENT_FILE" = false ] && head -5 "$file" | grep -qE '^\s*["'"'"']use client["'"'"']' 2>/dev/null; then
+        IS_CLIENT_FILE=true
+      fi
+      if [ "$IS_CLIENT_FILE" = true ]; then
+        TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
+        case "$TRIMMED" in
+          "//"*|"#"*|"*"*) ;; # skip comments
+          *) warn "SUPABASE_SERVICE_ROLE_KEY in client-accessible path — must be server-only" "$file" "$LINE_NUM" ;;
+        esac
+      fi
     fi
 
   done < "$file"

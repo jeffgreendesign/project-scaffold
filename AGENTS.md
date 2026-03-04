@@ -36,5 +36,17 @@ pnpm verify
 
 - `README.md` — repo overview
 - `CLAUDE.md` — deeper workflow and architecture notes
-- `docs/AX_UPGRADE_REPORT.md` — inventory + AX upgrade changelog for this task
-- `docs/` — operational and architectural references
+- `docs/AX_UPGRADE_REPORT.md` — inventory + AX upgrade changelog
+- `docs/ENV.md` — environment variable model (Vercel + Supabase)
+- `docs/RUNBOOK.md` — local dev, deployment, and migration runbook
+- `docs/ARCHITECTURE.md` — repository and target architecture guidance
+- `docs/DECISIONS.md` — decision log for architectural choices
+- `docs/TROUBLESHOOTING.md` — common failure modes and fixes
+
+## Official References
+
+- Vercel agent resources: https://vercel.com/docs/agent-resources
+- Vercel agent skills: https://vercel.com/docs/agent-resources/skills
+- Vercel environment variables: https://vercel.com/docs/environment-variables
+- Supabase API keys: https://supabase.com/docs/guides/api/api-keys
+- Supabase local dev: https://supabase.com/docs/guides/local-development/overview

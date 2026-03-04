@@ -36,7 +36,18 @@
       "Bash(git log*)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(bash scripts/version-floor-check.sh*)"
+      "Bash(bash scripts/version-floor-check.sh*)",
+      "Bash(pnpm verify*)",
+      "Bash(npm run verify*)",
+      "Bash(yarn verify*)",
+      "Bash(supabase migration new *)",
+      "Bash(supabase migration list*)",
+      "Bash(supabase migration up*)",
+      "Bash(supabase db diff*)",
+      "Bash(supabase db push*)",
+      "Bash(supabase db pull*)",
+      "Bash(supabase db lint*)",
+      "Bash(supabase gen types *)"
     ],
     "deny": [
       "Bash(rm -rf *)",

@@ -98,4 +98,14 @@ When updating Vercel/Supabase guidance, also update:
 - `docs/ENV.md`
 - `docs/RUNBOOK.md`
 - `docs/ARCHITECTURE.md`
+- `docs/DECISIONS.md`
+- `docs/TROUBLESHOOTING.md`
 - `docs/AX_UPGRADE_REPORT.md`
+
+## Official References
+
+- Vercel agent resources: https://vercel.com/docs/agent-resources
+- Vercel agent skills: https://vercel.com/docs/agent-resources/skills
+- Vercel environment variables: https://vercel.com/docs/environment-variables
+- Supabase API keys: https://supabase.com/docs/guides/api/api-keys
+- Supabase local dev & migrations: https://supabase.com/docs/guides/local-development/overview

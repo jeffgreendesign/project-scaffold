@@ -12,7 +12,7 @@
 
 - **Small changes** (single file, typo, bug fix): implement directly
 - **Multi-file changes or new patterns** (3+ files, new subsystem, unfamiliar area): use `/design` to research the codebase and propose an approach before implementing — wait for approval before writing code
-- Always run `[pnpm gates]` before finishing any task
+- Always run `verify` (or `[pnpm gates]`) before finishing any task
 
 ## Quick Reference
 
@@ -26,7 +26,7 @@
 | Test            | `[pnpm test]`                  |
 | Type check      | `[pnpm typecheck]`            |
 | Build           | `[pnpm build]`                 |
-| **All checks**  | **`[pnpm gates]`**             |
+| **All checks**  | **`[npm run gates]`** / **`[pnpm gates]`** / **`[yarn gates]`** (alias: `verify`) |
 | Node targets    | [>= 22 / >= 20 / >= 18]       |
 | TS target       | [ESNext / ES2022 / etc.]       |
 | Version floors  | `config/version-floors.json`   |
@@ -45,7 +45,7 @@
 [pnpm dev]
 
 # Quality gates (run before every commit)
-[pnpm gates]
+[pnpm gates]   # alias: verify
 
 # Individual checks
 [pnpm lint]
@@ -117,6 +117,7 @@ Most tasks start in `src/`. Key entry points:
 These will fail the build:
 
 - Using a framework version below the security floor (see `config/version-floors.json`) — Vercel will block deployment
+- Missing `export const maxDuration = N;` on Vercel function routes that need a custom timeout — Fluid Compute (enabled by default) sets a 300s default on all plans; legacy defaults without Fluid Compute were 10s Hobby / 60s Pro — see https://vercel.com/docs/functions
 - [Mistake 1]
 - [Mistake 2]
 
@@ -124,6 +125,7 @@ These will fail the build:
 
 These won't fail the build but cause problems:
 
+- Importing `SUPABASE_SERVICE_ROLE_KEY` in client components — bypasses RLS and leaks to browser bundle
 - [Mistake 1]
 - [Mistake 2]
 
@@ -143,7 +145,19 @@ These won't fail the build but cause problems:
    [minimal template]
    ```
 
-4. Run `[pnpm gates]`
+4. Run `verify` (or `[pnpm gates]`)
+
+### New Database Migration (Supabase)
+
+<!-- CUSTOMIZE: Remove this section if the project doesn't use Supabase. -->
+
+1. `supabase migration new <descriptive_name>`
+2. Edit the generated SQL file in `supabase/migrations/`
+3. Apply locally: `supabase migration up` (or `supabase db reset` for full rebuild)
+4. Test with seed data and verify RLS policies
+5. Deploy: `supabase db push`
+
+See: https://supabase.com/docs/guides/deployment/database-migrations
 
 ### Reference Implementations
 
