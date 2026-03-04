@@ -119,15 +119,21 @@ for file in $FILES; do
     # The service-role key bypasses RLS and must never be used in client bundles.
     # See: https://supabase.com/docs/guides/api/api-keys
     if echo "$line" | grep -qE "SUPABASE_SERVICE_ROLE_KEY" 2>/dev/null; then
+      IS_CLIENT_FILE=false
       case "$file" in
-        */app/*|*/pages/*|*components/*|*"use client"*)
-          TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
-          case "$TRIMMED" in
-            "//"*|"#"*|"*"*) ;; # skip comments
-            *) warn "SUPABASE_SERVICE_ROLE_KEY in client-accessible path — must be server-only" "$file" "$LINE_NUM" ;;
-          esac
-          ;;
+        */app/*|*/pages/*|*components/*) IS_CLIENT_FILE=true ;;
       esac
+      # Also check if file contains "use client" directive in first 5 lines
+      if [ "$IS_CLIENT_FILE" = false ] && head -5 "$file" | grep -qE '^\s*["'"'"']use client["'"'"']' 2>/dev/null; then
+        IS_CLIENT_FILE=true
+      fi
+      if [ "$IS_CLIENT_FILE" = true ]; then
+        TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
+        case "$TRIMMED" in
+          "//"*|"#"*|"*"*) ;; # skip comments
+          *) warn "SUPABASE_SERVICE_ROLE_KEY in client-accessible path — must be server-only" "$file" "$LINE_NUM" ;;
+        esac
+      fi
     fi
 
   done < "$file"

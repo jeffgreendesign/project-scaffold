@@ -12,7 +12,7 @@ This scaffold recommends splitting environment variables into:
 | Variable | Required | Scope | Purpose |
 |---|---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Client + Server | Supabase project URL for browser/server clients |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Client + Server | Public anonymous key for Supabase client auth |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Recommended (or use publishable key) | Client + Server | Public anonymous key — safe for client use; see publishable keys section for newer alternative |
 | `SUPABASE_SERVICE_ROLE_KEY` | Optional (server jobs/admin only) | Server-only | Elevated access for trusted backend tasks — **never expose in client bundles** |
 | `SUPABASE_ACCESS_TOKEN` | Optional | Local CLI/CI | Token for Supabase CLI operations |
 | `POSTGRES_URL` | Optional (migration workflows) | Server/CI | Pooled Postgres connection string for ORM/query use |

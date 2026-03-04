@@ -29,7 +29,7 @@ This scaffold is aligned to modern Vercel + Supabase patterns:
 - **Migrations:** All schema changes go through `supabase/migrations/` files. Use `supabase migration new` to create, `supabase db push` to deploy.
 - **Branching:** Supabase branches provide isolated database instances per Git branch, with automatic migration application on PR creation.
 - **RLS:** Row-Level Security should be enabled on all user-facing tables. Test policies locally with `supabase db reset` and seed data.
-- **Auth boundaries:** Use `@supabase/ssr` for server-side auth in Next.js. Browser clients use the anon key; server routes can use the service-role key for admin operations.
+- **Auth boundaries:** Use `@supabase/ssr` for server-side auth in Next.js. Browser clients use the anon key; prefer the anon key plus RLS for regular server flows too. Reserve the service-role key for trusted server-side admin operations that must bypass RLS (background jobs, maintenance scripts, privileged system tasks). Minimize service-role key surface area and store it in secure vaults; rotate periodically.
 
 ## Official references
 

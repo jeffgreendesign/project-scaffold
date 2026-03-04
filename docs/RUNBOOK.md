@@ -37,9 +37,9 @@ supabase db push
 
 ### Branching (preview environments)
 
-Supabase branches provide isolated database instances per Git branch:
+Supabase branches provide isolated database instances per Git branch. **Prerequisites:** Enable the Supabase GitHub integration in your Supabase project settings, point it at your repository and the `supabase/` directory, and enable "Automatic branching" in the integration settings. Once configured:
 
-1. Open a PR to create a preview branch automatically.
+1. Open a PR to create a preview branch automatically (requires the GitHub integration and automatic branching to be enabled).
 2. Each branch gets its own database, API endpoints, auth, and storage.
 3. Use `POSTGRES_URL_NON_POOLING` from the branch for ORM migrations in CI.
 4. Merge the branch to apply migrations to production.

@@ -14,7 +14,7 @@
 ## Supabase auth issues in downstream projects
 
 - Confirm anon key is used in browser paths.
-- Confirm service-role key is server-only — never import it in files under `src/app/` or any `"use client"` component.
+- Confirm service-role key is server-only — never import it in any client-side files or components (`src/app/` for App Router, `src/pages/` for Pages Router, or any file using `"use client"`).
 - Validate cookie/session behavior with official `@supabase/ssr` auth helpers.
 
 ## Supabase migration drift
@@ -32,7 +32,8 @@
 
 ## Vercel function timeouts / Fluid Compute
 
-- Default function timeout is 10s on Hobby, 60s on Pro. Set `export const maxDuration = 60;` for long-running routes.
+- With Fluid Compute (enabled by default on new projects since April 2025), the default timeout is 300s (5 min) on all plans. Max is 300s on Hobby, 800s on Pro/Enterprise. Set `export const maxDuration = N;` to configure per-route.
+- Legacy (Fluid Compute disabled): defaults were 10s Hobby / 15s Pro, with maximums of 60s Hobby / 300s Pro.
 - If a function times out, check whether it can be optimized or if `maxDuration` needs increasing.
 - Fluid Compute reuses function instances — avoid global mutable state that persists across requests.
 

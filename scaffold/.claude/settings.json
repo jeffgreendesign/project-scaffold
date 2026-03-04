@@ -40,8 +40,13 @@
       "Bash(pnpm verify*)",
       "Bash(npm run verify*)",
       "Bash(yarn verify*)",
-      "Bash(supabase migration *)",
-      "Bash(supabase db *)",
+      "Bash(supabase migration new *)",
+      "Bash(supabase migration list*)",
+      "Bash(supabase migration up*)",
+      "Bash(supabase db diff*)",
+      "Bash(supabase db push*)",
+      "Bash(supabase db pull*)",
+      "Bash(supabase db lint*)",
       "Bash(supabase gen types *)"
     ],
     "deny": [

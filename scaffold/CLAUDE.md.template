@@ -26,7 +26,7 @@
 | Test            | `[pnpm test]`                  |
 | Type check      | `[pnpm typecheck]`            |
 | Build           | `[pnpm build]`                 |
-| **All checks**  | **`[pnpm gates]`** (alias: `[pnpm verify]`) |
+| **All checks**  | **`[npm run gates]`** / **`[pnpm gates]`** / **`[yarn gates]`** (alias: `verify`) |
 | Node targets    | [>= 22 / >= 20 / >= 18]       |
 | TS target       | [ESNext / ES2022 / etc.]       |
 | Version floors  | `config/version-floors.json`   |
