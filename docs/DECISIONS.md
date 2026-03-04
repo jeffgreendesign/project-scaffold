@@ -2,6 +2,12 @@
 
 ## Decision log
 
+### 2026-03-04 — Incremental doc refresh with latest official Vercel/Supabase guidance
+
+- **Context:** Prior AX pass (2026-03-03) created all control-plane files. Official docs have added Fluid Compute, `use cache` directives, Supabase branching, and publishable keys.
+- **Decision:** Update existing docs with current official-doc links and add missing guidance sections (caching patterns, migration workflow, branching, publishable keys). No structural changes.
+- **Reasoning:** Least-change approach — freshen content, don't reorganize. Keep the scaffold framework-agnostic.
+
 ### 2026-03-03 — Standardize on `pnpm verify` as canonical gate
 
 - **Context:** Multiple script naming patterns increase agent error rates.
@@ -21,5 +27,6 @@ If downstream users need hard choices (e.g., App Router vs Pages Router, specifi
 ## Official references
 
 - Vercel framework docs hub: https://vercel.com/docs/frameworks
+- Vercel agent resources: https://vercel.com/docs/agent-resources
 - Supabase auth overview: https://supabase.com/docs/guides/auth
 - Supabase RLS overview: https://supabase.com/docs/guides/database/postgres/row-level-security
