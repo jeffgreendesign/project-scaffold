@@ -85,7 +85,7 @@ docs/        # maintainer-facing documentation
 
 ### Silent Bugs
 
-- Missing official-doc links for Vercel/Supabase guidance.
+- Missing official-doc links for Vercel/Neon/Better Auth guidance.
 - Documenting env vars without noting server vs client boundaries.
 
 ## Environment Variables
@@ -94,7 +94,7 @@ This repository itself has no required runtime environment variables for local m
 
 ## Documentation Sync Rules
 
-When updating Vercel/Supabase guidance, also update:
+When updating Vercel/Neon/Better Auth guidance, also update:
 - `docs/ENV.md`
 - `docs/RUNBOOK.md`
 - `docs/ARCHITECTURE.md`
@@ -107,5 +107,7 @@ When updating Vercel/Supabase guidance, also update:
 - Vercel agent resources: https://vercel.com/docs/agent-resources
 - Vercel agent skills: https://vercel.com/docs/agent-resources/skills
 - Vercel environment variables: https://vercel.com/docs/environment-variables
-- Supabase API keys: https://supabase.com/docs/guides/api/api-keys
-- Supabase local dev & migrations: https://supabase.com/docs/guides/local-development/overview
+- Neon docs: https://neon.tech/docs
+- Neon branching: https://neon.tech/docs/introduction/branching
+- Better Auth docs: https://www.better-auth.com/docs
+- Drizzle ORM: https://orm.drizzle.team/docs/overview

@@ -40,14 +40,13 @@
       "Bash(pnpm verify*)",
       "Bash(npm run verify*)",
       "Bash(yarn verify*)",
-      "Bash(supabase migration new *)",
-      "Bash(supabase migration list*)",
-      "Bash(supabase migration up*)",
-      "Bash(supabase db diff*)",
-      "Bash(supabase db push*)",
-      "Bash(supabase db pull*)",
-      "Bash(supabase db lint*)",
-      "Bash(supabase gen types *)"
+      "Bash(pnpm drizzle-kit generate*)",
+      "Bash(pnpm drizzle-kit push*)",
+      "Bash(pnpm drizzle-kit migrate*)",
+      "Bash(pnpm drizzle-kit studio*)",
+      "Bash(neonctl branches *)",
+      "Bash(neonctl databases *)",
+      "Bash(neonctl connection-string *)"
     ],
     "deny": [
       "Bash(rm -rf *)",

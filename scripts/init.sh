@@ -227,7 +227,17 @@ write_file '.claude/settings.json' << 'SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON_7f3d9a
       "Bash(git log*)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(bash scripts/version-floor-check.sh*)"
+      "Bash(bash scripts/version-floor-check.sh*)",
+      "Bash(pnpm verify*)",
+      "Bash(npm run verify*)",
+      "Bash(yarn verify*)",
+      "Bash(pnpm drizzle-kit generate*)",
+      "Bash(pnpm drizzle-kit push*)",
+      "Bash(pnpm drizzle-kit migrate*)",
+      "Bash(pnpm drizzle-kit studio*)",
+      "Bash(neonctl branches *)",
+      "Bash(neonctl databases *)",
+      "Bash(neonctl connection-string *)"
     ],
     "deny": [
       "Bash(rm -rf *)",
@@ -309,31 +319,41 @@ SCAFFOLD_EOF__CURSOR_RULES_TYPESCRIPT_MDC_7f3d9a
 
 write_file '.env.example' << 'SCAFFOLD_EOF__ENV_EXAMPLE_7f3d9a'
 # ============================================================================
-# Environment Variables (Vercel + Supabase baseline)
+# Environment Variables (Vercel + Neon + Better Auth baseline)
 # ============================================================================
 # Copy to .env.local for local development.
 # Never commit real secrets.
 #
 # Official docs:
 # - Vercel env vars: https://vercel.com/docs/environment-variables
-# - Supabase API keys: https://supabase.com/docs/guides/api/api-keys
-# - Supabase Next.js SSR auth: https://supabase.com/docs/guides/auth/server-side/nextjs
+# - Neon connection strings: https://neon.tech/docs/connect/connection-pooling
+# - Better Auth configuration: https://www.better-auth.com/docs/installation
+# - Vercel Blob: https://vercel.com/docs/storage/vercel-blob
 # ============================================================================
 
 # App runtime
 NODE_ENV=development
 PORT=3000
 
-# Supabase (public)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+# Neon database (server-only)
+# Pooled connection for runtime queries (uses PgBouncer)
+DATABASE_URL=postgres://[user]:[password]@[endpoint]-pooler.[region].aws.neon.tech/[dbname]?sslmode=require
+# Direct connection for migrations and schema changes (no pooler)
+DATABASE_URL_UNPOOLED=postgres://[user]:[password]@[endpoint].[region].aws.neon.tech/[dbname]?sslmode=require
 
-# Supabase (server-only, optional unless doing admin/server jobs)
-# SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-# SUPABASE_ACCESS_TOKEN=your-supabase-cli-access-token
+# Better Auth (server-only)
+# Secret for signing/encrypting sessions — min 32 chars, high entropy
+BETTER_AUTH_SECRET=your-secret-key-at-least-32-characters
+# Base URL for auth callbacks (update for production)
+BETTER_AUTH_URL=http://localhost:3000
+
+# Vercel Blob (server-only, optional — for file uploads)
+# Automatically provisioned when Blob storage is added via Vercel dashboard
+# BLOB_READ_WRITE_TOKEN=vercel_blob_rw_...
 
 # Vercel system env vars are automatically provided in hosted environments
 # VERCEL_ENV=development
+# VERCEL_PROJECT_PRODUCTION_URL=your-domain.com
 
 SCAFFOLD_EOF__ENV_EXAMPLE_7f3d9a
 
@@ -552,7 +572,7 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 - **What this repo is:** [One sentence]
 - **Primary stack:** [TypeScript / Python / mixed]
 - **Package manager:** [pnpm / npm / yarn / pip]
-- **Canonical quality gate:** `[pnpm gates]`
+- **Canonical quality gate:** `[npm run gates]` / `[pnpm gates]` / `[yarn gates]` (alias: `verify`)
 
 ## First Commands To Run
 
@@ -586,6 +606,16 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 - `CLAUDE.md` — deep repo conventions and architecture
 - `NOW.md` — current sprint status and next actions
 - `docs/` — long-form decisions and implementation guides
+
+## Official References
+
+<!-- CUSTOMIZE: Add links relevant to your project's stack. -->
+
+- Vercel agent resources: https://vercel.com/docs/agent-resources
+- Vercel agent skills: https://vercel.com/docs/agent-resources/skills
+- Neon docs: https://neon.tech/docs
+- Better Auth docs: https://www.better-auth.com/docs
+- Drizzle ORM docs: https://orm.drizzle.team/docs/overview
 
 ## Optional: External API Usage Guide
 
@@ -639,7 +669,7 @@ write_file 'CLAUDE.md' << 'SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE_7f3d9a'
 
 - **Small changes** (single file, typo, bug fix): implement directly
 - **Multi-file changes or new patterns** (3+ files, new subsystem, unfamiliar area): use `/design` to research the codebase and propose an approach before implementing — wait for approval before writing code
-- Always run `[pnpm gates]` before finishing any task
+- Always run `verify` (or `[pnpm gates]`) before finishing any task
 
 ## Quick Reference
 
@@ -653,7 +683,7 @@ write_file 'CLAUDE.md' << 'SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE_7f3d9a'
 | Test            | `[pnpm test]`                  |
 | Type check      | `[pnpm typecheck]`            |
 | Build           | `[pnpm build]`                 |
-| **All checks**  | **`[pnpm gates]`**             |
+| **All checks**  | **`[npm run gates]`** / **`[pnpm gates]`** / **`[yarn gates]`** (alias: `verify`) |
 | Node targets    | [>= 22 / >= 20 / >= 18]       |
 | TS target       | [ESNext / ES2022 / etc.]       |
 | Version floors  | `config/version-floors.json`   |
@@ -672,7 +702,7 @@ write_file 'CLAUDE.md' << 'SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE_7f3d9a'
 [pnpm dev]
 
 # Quality gates (run before every commit)
-[pnpm gates]
+[pnpm gates]   # alias: verify
 
 # Individual checks
 [pnpm lint]
@@ -744,6 +774,7 @@ Most tasks start in `src/`. Key entry points:
 These will fail the build:
 
 - Using a framework version below the security floor (see `config/version-floors.json`) — Vercel will block deployment
+- Missing `export const maxDuration = N;` on Vercel function routes that need a custom timeout — Fluid Compute (enabled by default) sets a 300s default on all plans; legacy defaults without Fluid Compute were 10s Hobby / 60s Pro — see https://vercel.com/docs/functions
 - [Mistake 1]
 - [Mistake 2]
 
@@ -751,6 +782,7 @@ These will fail the build:
 
 These won't fail the build but cause problems:
 
+- Importing `DATABASE_URL` or `BETTER_AUTH_SECRET` in client components — leaks server secrets to browser bundle
 - [Mistake 1]
 - [Mistake 2]
 
@@ -770,7 +802,20 @@ These won't fail the build but cause problems:
    [minimal template]
    ```
 
-4. Run `[pnpm gates]`
+4. Run `verify` (or `[pnpm gates]`)
+
+### New Database Migration (Drizzle + Neon)
+
+<!-- CUSTOMIZE: Remove this section if the project doesn't use Drizzle/Neon. -->
+
+1. Edit the Drizzle schema file(s) in `src/db/schema/`
+2. Generate migration: `pnpm drizzle-kit generate`
+3. Review generated SQL in `drizzle/` migrations folder
+4. Apply locally: `pnpm drizzle-kit migrate` (or `pnpm drizzle-kit push` for dev)
+5. Test with seed data and verify auth middleware guards
+6. Deploy: migration runs automatically on next deployment (or `pnpm drizzle-kit push` for direct apply)
+
+See: https://orm.drizzle.team/docs/get-started/neon-new
 
 ### Reference Implementations
 
@@ -1424,6 +1469,7 @@ write_executable 'scripts/security-check.sh' << 'SCAFFOLD_EOF_SCRIPTS_SECURITY-C
 # - Hardcoded secrets: API keys, tokens, passwords in source
 # - eval() usage: code injection risk
 # - SQL string interpolation: SQL injection risk
+# - Server-only secrets (DATABASE_URL, BETTER_AUTH_SECRET) in client component paths
 #
 # Usage:
 #   ./scripts/security-check.sh              # Warn only (exit 0)
@@ -1525,6 +1571,28 @@ for file in $FILES; do
     # Catches template literals and f-strings used in SQL-like contexts
     if echo "$line" | grep -qE "(SELECT|INSERT|UPDATE|DELETE|DROP|ALTER).*(\\\$\{|\" *\+|f['\"])" 2>/dev/null; then
       warn "SQL string interpolation — use parameterized queries" "$file" "$LINE_NUM"
+    fi
+
+    # --- Server-Only Secrets in Client Paths ---
+    # DATABASE_URL and BETTER_AUTH_SECRET must never appear in client bundles.
+    # See: https://neon.tech/docs/connect/connection-pooling
+    # See: https://www.better-auth.com/docs/installation
+    if echo "$line" | grep -qE "(DATABASE_URL|BETTER_AUTH_SECRET)" 2>/dev/null; then
+      IS_CLIENT_FILE=false
+      case "$file" in
+        */app/*|*/pages/*|*components/*) IS_CLIENT_FILE=true ;;
+      esac
+      # Also check if file contains "use client" directive in first 5 lines
+      if [ "$IS_CLIENT_FILE" = false ] && head -5 "$file" | grep -qE '^\s*["'"'"']use client["'"'"']' 2>/dev/null; then
+        IS_CLIENT_FILE=true
+      fi
+      if [ "$IS_CLIENT_FILE" = true ]; then
+        TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
+        case "$TRIMMED" in
+          "//"*|"#"*|"*"*) ;; # skip comments
+          *) warn "Server-only secret (DATABASE_URL or BETTER_AUTH_SECRET) in client-accessible path" "$file" "$LINE_NUM" ;;
+        esac
+      fi
     fi
 
   done < "$file"

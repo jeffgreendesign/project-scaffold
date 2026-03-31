@@ -55,6 +55,9 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 
 - Vercel agent resources: https://vercel.com/docs/agent-resources
 - Vercel agent skills: https://vercel.com/docs/agent-resources/skills
+- Neon docs: https://neon.tech/docs
+- Better Auth docs: https://www.better-auth.com/docs
+- Drizzle ORM docs: https://orm.drizzle.team/docs/overview
 
 ## Optional: External API Usage Guide
 
