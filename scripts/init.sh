@@ -229,8 +229,10 @@ write_file '.claude/settings.json' << 'SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON_7f3d9a
       "Bash(git commit *)",
       "Bash(bash scripts/version-floor-check.sh*)",
       "Bash(pnpm verify*)",
+      "Bash(pnpm run verify*)",
       "Bash(npm run verify*)",
       "Bash(yarn verify*)",
+      "Bash(yarn run verify*)",
       "Bash(pnpm drizzle-kit generate*)",
       "Bash(pnpm drizzle-kit push*)",
       "Bash(pnpm drizzle-kit migrate*)",
@@ -817,11 +819,11 @@ These won't fail the build but cause problems:
 <!-- CUSTOMIZE: Remove this section if the project doesn't use Drizzle/Neon. -->
 
 1. Edit the Drizzle schema file(s) in `src/db/schema/`
-2. Generate migration: `pnpm drizzle-kit generate`
+2. Generate migration: `drizzle-kit generate` (run via your package manager, e.g. `pnpm drizzle-kit generate`)
 3. Review generated SQL in `drizzle/` migrations folder
-4. Apply locally: `pnpm drizzle-kit migrate` (or `pnpm drizzle-kit push` for dev)
+4. Apply locally: `drizzle-kit migrate` (or `drizzle-kit push` for dev)
 5. Test with seed data and verify auth middleware guards
-6. Deploy: migration runs automatically on next deployment (or `pnpm drizzle-kit push` for direct apply)
+6. Deploy: add `drizzle-kit migrate` or `drizzle-kit push` to your CI/deploy pipeline (migrations do not run automatically unless configured)
 
 See: https://orm.drizzle.team/docs/get-started/neon-new
 
@@ -1513,10 +1515,20 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   FILES=$(git diff --cached --name-only --diff-filter=ACM -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.py' 2>/dev/null || true)
   if [ -z "$FILES" ]; then
     # No staged files — check all source files
-    FILES=$(find "$PROJECT_DIR/src" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)
+    FILES=""
+    for _dir in "$PROJECT_DIR/src" "$PROJECT_DIR/app" "$PROJECT_DIR/pages" "$PROJECT_DIR/components"; do
+      [ -d "$_dir" ] && FILES="$FILES
+$(find "$_dir" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)"
+    done
+    FILES=$(echo "$FILES" | sed '/^$/d')
   fi
 else
-  FILES=$(find "$PROJECT_DIR/src" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)
+  FILES=""
+  for _dir in "$PROJECT_DIR/src" "$PROJECT_DIR/app" "$PROJECT_DIR/pages" "$PROJECT_DIR/components"; do
+    [ -d "$_dir" ] && FILES="$FILES
+$(find "$_dir" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)"
+  done
+  FILES=$(echo "$FILES" | sed '/^$/d')
 fi
 
 if [ -z "$FILES" ]; then

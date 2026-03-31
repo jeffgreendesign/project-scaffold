@@ -47,10 +47,20 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   FILES=$(git diff --cached --name-only --diff-filter=ACM -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.py' 2>/dev/null || true)
   if [ -z "$FILES" ]; then
     # No staged files — check all source files
-    FILES=$(find "$PROJECT_DIR/src" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)
+    FILES=""
+    for _dir in "$PROJECT_DIR/src" "$PROJECT_DIR/app" "$PROJECT_DIR/pages" "$PROJECT_DIR/components"; do
+      [ -d "$_dir" ] && FILES="$FILES
+$(find "$_dir" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)"
+    done
+    FILES=$(echo "$FILES" | sed '/^$/d')
   fi
 else
-  FILES=$(find "$PROJECT_DIR/src" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)
+  FILES=""
+  for _dir in "$PROJECT_DIR/src" "$PROJECT_DIR/app" "$PROJECT_DIR/pages" "$PROJECT_DIR/components"; do
+    [ -d "$_dir" ] && FILES="$FILES
+$(find "$_dir" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)"
+  done
+  FILES=$(echo "$FILES" | sed '/^$/d')
 fi
 
 if [ -z "$FILES" ]; then

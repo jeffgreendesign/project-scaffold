@@ -152,11 +152,11 @@ These won't fail the build but cause problems:
 <!-- CUSTOMIZE: Remove this section if the project doesn't use Drizzle/Neon. -->
 
 1. Edit the Drizzle schema file(s) in `src/db/schema/`
-2. Generate migration: `pnpm drizzle-kit generate`
+2. Generate migration: `drizzle-kit generate` (run via your package manager, e.g. `pnpm drizzle-kit generate`)
 3. Review generated SQL in `drizzle/` migrations folder
-4. Apply locally: `pnpm drizzle-kit migrate` (or `pnpm drizzle-kit push` for dev)
+4. Apply locally: `drizzle-kit migrate` (or `drizzle-kit push` for dev)
 5. Test with seed data and verify auth middleware guards
-6. Deploy: migration runs automatically on next deployment (or `pnpm drizzle-kit push` for direct apply)
+6. Deploy: add `drizzle-kit migrate` or `drizzle-kit push` to your CI/deploy pipeline (migrations do not run automatically unless configured)
 
 See: https://orm.drizzle.team/docs/get-started/neon-new
 

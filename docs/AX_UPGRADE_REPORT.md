@@ -45,20 +45,20 @@ Supabase free tier has significant limitations: projects pause after 7 days of i
 ### Commit A: Docs + control-plane files
 - Updated `CLAUDE.md`: added `docs/DECISIONS.md` and `docs/TROUBLESHOOTING.md` to sync rules, added official references section with Vercel agent-resources links.
 - Updated `AGENTS.md`: expanded documentation map with all docs/* files, added official references section.
-- Updated `docs/ENV.md`: added Neon connection vars; added framework env var and branching doc links.
-- Updated `docs/RUNBOOK.md`: added Drizzle migration commands, Neon branching workflow, Better Auth session guidance.
-- Updated `docs/ARCHITECTURE.md`: added Vercel Fluid Compute / `use cache` / `cacheLife` / `cacheTag` / `revalidateTag` caching patterns; added Neon branching and Drizzle migration guidance; updated doc links.
+- Updated `docs/ENV.md`: added `POSTGRES_URL`, `POSTGRES_URL_NON_POOLING`, `VERCEL_PROJECT_PRODUCTION_URL` vars; added Supabase publishable keys note; added framework env var and branching doc links. *(Supabase vars later replaced by Neon equivalents in 2026-03-31 upgrade.)*
+- Updated `docs/RUNBOOK.md`: added Supabase CLI migration commands, branching workflow, RLS testing guidance, Vercel system env var usage. *(Supabase workflow later replaced by Drizzle + Neon in 2026-03-31 upgrade.)*
+- Updated `docs/ARCHITECTURE.md`: added Vercel Fluid Compute / `use cache` / `cacheLife` / `cacheTag` / `revalidateTag` caching patterns; added Supabase branching and migration guidance; updated doc links. *(Supabase guidance later replaced by Neon + Better Auth in 2026-03-31 upgrade.)*
 - Updated `docs/DECISIONS.md`: added 2026-03-04 decision entry for incremental refresh.
-- Updated `docs/TROUBLESHOOTING.md`: added Drizzle migration drift section, Vercel Fluid Compute timeout section, improved existing entries.
+- Updated `docs/TROUBLESHOOTING.md`: added Supabase migration drift section, Vercel Fluid Compute timeout section, improved existing entries. *(Supabase sections later replaced by Drizzle + Neon in 2026-03-31 upgrade.)*
 
 ### Commit B: Scaffold templates
-- Updated `scaffold/.env.example`: added Neon connection vars for migration/branching workflows.
-- Updated `scaffold/CLAUDE.md.template`: added `verify` alias in Quick Reference, added Fluid Compute `maxDuration` to common mistakes, added Drizzle migration workflow recipe.
+- Updated `scaffold/.env.example`: added `POSTGRES_URL` / `POSTGRES_URL_NON_POOLING` for migration/branching workflows, added Supabase publishable keys comment. *(Later replaced by Neon vars in 2026-03-31 upgrade.)*
+- Updated `scaffold/CLAUDE.md.template`: added `verify` alias in Quick Reference, added Fluid Compute `maxDuration` to common mistakes, added Supabase migration workflow recipe. *(Migration recipe later replaced by Drizzle workflow in 2026-03-31 upgrade.)*
 - Updated `scaffold/AGENTS.md.template`: added `verify` alias note, added Vercel agent-resources link.
 
 ### Commit C: Env var correctness + security hardening
-- Updated `scaffold/scripts/security-check.sh`: added check for server-only secrets (DATABASE_URL, BETTER_AUTH_SECRET) in client component paths.
-- Verified `scaffold/.claude/settings.json` includes Drizzle Kit and Neon CLI in allow list.
+- Updated `scaffold/scripts/security-check.sh`: added check for `SUPABASE_SERVICE_ROLE_KEY` usage in client component paths. *(Later replaced by DATABASE_URL / BETTER_AUTH_SECRET check in 2026-03-31 upgrade.)*
+- Verified `scaffold/.claude/settings.json` includes Supabase CLI in allow list. *(Later replaced by Drizzle Kit and Neon CLI in 2026-03-31 upgrade.)*
 - Verified `.gitignore` correctly blocks `.env*` files (no change needed).
 
 ## Why (official-doc links per change)
