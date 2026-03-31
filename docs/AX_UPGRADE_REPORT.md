@@ -101,7 +101,7 @@ Expected outcomes:
 - `pnpm verify` runs all four phases sequentially.
 - Scaffold copy (`./scripts/scaffold.sh /tmp/test`) creates files without errors.
 - All docs/*.md files contain an "Official references" section with valid links.
-- No remaining references to Supabase in scaffold/ or docs/ files.
+- No remaining active guidance referencing Supabase in scaffold/ or docs/ files (historical/migration mentions in changelogs are expected).
 
 ## Follow-ups
 
