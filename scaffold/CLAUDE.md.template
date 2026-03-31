@@ -125,7 +125,7 @@ These will fail the build:
 
 These won't fail the build but cause problems:
 
-- Importing `SUPABASE_SERVICE_ROLE_KEY` in client components — bypasses RLS and leaks to browser bundle
+- Importing `DATABASE_URL` or `BETTER_AUTH_SECRET` in client components — leaks server secrets to browser bundle
 - [Mistake 1]
 - [Mistake 2]
 
@@ -147,17 +147,18 @@ These won't fail the build but cause problems:
 
 4. Run `verify` (or `[pnpm gates]`)
 
-### New Database Migration (Supabase)
+### New Database Migration (Drizzle + Neon)
 
-<!-- CUSTOMIZE: Remove this section if the project doesn't use Supabase. -->
+<!-- CUSTOMIZE: Remove this section if the project doesn't use Drizzle/Neon. -->
 
-1. `supabase migration new <descriptive_name>`
-2. Edit the generated SQL file in `supabase/migrations/`
-3. Apply locally: `supabase migration up` (or `supabase db reset` for full rebuild)
-4. Test with seed data and verify RLS policies
-5. Deploy: `supabase db push`
+1. Edit the Drizzle schema file(s) in `src/db/schema/`
+2. Generate migration: `drizzle-kit generate` (run via your package manager, e.g. `pnpm drizzle-kit generate`)
+3. Review generated SQL in `drizzle/` migrations folder
+4. Apply locally: `drizzle-kit migrate` (or `drizzle-kit push` for dev)
+5. Test with seed data and verify auth middleware guards
+6. Deploy: add `drizzle-kit migrate` or `drizzle-kit push` to your CI/deploy pipeline (migrations do not run automatically unless configured)
 
-See: https://supabase.com/docs/guides/deployment/database-migrations
+See: https://orm.drizzle.team/docs/get-started/neon-new
 
 ### Reference Implementations
 

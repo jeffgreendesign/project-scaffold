@@ -8,10 +8,11 @@
 
 ## Target architecture guidance (for generated projects)
 
-This scaffold is aligned to modern Vercel + Supabase patterns:
+This scaffold is aligned to modern Vercel + Neon + Better Auth patterns:
 
 - Next.js on Vercel with explicit server/client boundaries.
-- Supabase clients separated by runtime context (browser vs server).
+- Neon PostgreSQL with Drizzle ORM for type-safe database access.
+- Better Auth for authentication, storing session data in your own Neon DB.
 - Env-driven configuration for preview vs production safety.
 - Cache/revalidation behavior documented at route/data-layer boundaries.
 
@@ -24,12 +25,18 @@ This scaffold is aligned to modern Vercel + Supabase patterns:
   - Tag-based: `fetch(url, { next: { tags: ['blog'] } })` with `revalidateTag('blog')` for on-demand invalidation.
   - Non-fetch sources: use `unstable_cache()` wrapper for database queries.
 
-### Supabase data layer
+### Neon data layer
 
-- **Migrations:** All schema changes go through `supabase/migrations/` files. Use `supabase migration new` to create, `supabase db push` to deploy.
-- **Branching:** Supabase branches provide isolated database instances per Git branch, with automatic migration application on PR creation.
-- **RLS:** Row-Level Security should be enabled on all user-facing tables. Test policies locally with `supabase db reset` and seed data.
-- **Auth boundaries:** Use `@supabase/ssr` for server-side auth in Next.js. Browser clients use the anon key; prefer the anon key plus RLS for regular server flows too. Reserve the service-role key for trusted server-side admin operations that must bypass RLS (background jobs, maintenance scripts, privileged system tasks). Minimize service-role key surface area and store it in secure vaults; rotate periodically.
+- **Connection strings:** Use `DATABASE_URL` (pooled via PgBouncer) for runtime queries. Use `DATABASE_URL_UNPOOLED` (direct) for migrations and schema changes. Never expose either in client bundles.
+- **Drizzle ORM:** All schema changes go through Drizzle schema files in `src/db/schema/`. Use `pnpm drizzle-kit generate` to create migrations, `pnpm drizzle-kit push` for dev, `pnpm drizzle-kit migrate` for production.
+- **Branching:** Neon branches provide isolated database instances per Git branch on the free tier (up to 10 branches). Create preview branches with `neonctl branches create` or via the Neon GitHub integration for automatic PR-based branches.
+- **File storage:** Use Vercel Blob for file uploads. The `BLOB_READ_WRITE_TOKEN` is server-only — never expose it in client bundles.
+
+### Better Auth
+
+- **Session management:** Better Auth stores sessions in your Neon database via the Drizzle adapter (`better-auth/adapters/drizzle`). No separate auth service needed.
+- **Auth boundaries:** Protect routes with Better Auth middleware in server components and API routes. Use `auth.api.getSession()` for server-side session access. Use `createAuthClient()` from `better-auth/react` for client-side auth state.
+- **Security model:** Instead of database-level RLS, enforce access control in server-side middleware and Drizzle query guards. Keep `BETTER_AUTH_SECRET` and `DATABASE_URL` strictly server-only.
 
 ## Official references
 
@@ -37,7 +44,12 @@ This scaffold is aligned to modern Vercel + Supabase patterns:
 - Vercel runtime cache: https://vercel.com/docs/runtime-cache
 - Vercel data cache and revalidation: https://vercel.com/docs/runtime-cache/data-cache
 - Vercel agent resources: https://vercel.com/docs/agent-resources
-- Supabase Next.js guide: https://supabase.com/docs/guides/getting-started/quickstarts/nextjs
-- Supabase SSR auth utilities: https://supabase.com/docs/guides/auth/server-side
-- Supabase local development and migrations: https://supabase.com/docs/guides/local-development/overview
-- Supabase branching: https://supabase.com/docs/guides/deployment/branching/working-with-branches
+- Vercel Blob: https://vercel.com/docs/storage/vercel-blob
+- Neon docs: https://neon.tech/docs
+- Neon branching: https://neon.tech/docs/introduction/branching
+- Neon Vercel integration: https://neon.tech/docs/guides/vercel
+- Neon connection pooling: https://neon.tech/docs/connect/connection-pooling
+- Better Auth docs: https://www.better-auth.com/docs
+- Better Auth Next.js integration: https://www.better-auth.com/docs/integrations/next
+- Drizzle ORM: https://orm.drizzle.team/docs/overview
+- Drizzle + Neon: https://orm.drizzle.team/docs/get-started/neon-new

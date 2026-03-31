@@ -11,18 +11,27 @@
 - Ensure CI runs the same `pnpm verify` command.
 - Ensure lockfile/package manager detection is not bypassed.
 
-## Supabase auth issues in downstream projects
+## Better Auth issues in downstream projects
 
-- Confirm anon key is used in browser paths.
-- Confirm service-role key is server-only — never import it in any client-side files or components (`src/app/` for App Router, `src/pages/` for Pages Router, or any file using `"use client"`).
-- Validate cookie/session behavior with official `@supabase/ssr` auth helpers.
+- Confirm `BETTER_AUTH_SECRET` is set and is at least 32 characters with high entropy.
+- Confirm `BETTER_AUTH_URL` matches the actual app URL (localhost for dev, production domain for deploy).
+- Confirm the auth API route exists at `/app/api/auth/[...all]/route.ts` using `toNextJsHandler`.
+- Check that the Drizzle adapter is configured with the correct provider (`"pg"` for Neon).
+- For session issues, verify cookies are being set correctly — check `SameSite`, `Secure`, and `Domain` attributes in production.
+- Client-side auth state not updating? Ensure `createAuthClient()` is configured with the correct `baseURL`.
 
-## Supabase migration drift
+## Drizzle migration drift
 
-- If local migrations don't match the remote project, run `supabase db pull` to capture remote schema.
-- `supabase db reset` resets the **local** development database only. For a stale hosted preview branch, either link the CLI (`supabase link`) and run `supabase db reset --linked`, or delete and recreate the preview branch in the dashboard.
-- Use `supabase db diff --schema public` to compare local dashboard changes against migration files.
-- Always run `supabase migration up` (not manual SQL) to apply changes locally.
+- If local schema doesn't match the remote database, run `pnpm drizzle-kit pull` to introspect the remote schema.
+- Use `pnpm drizzle-kit push` for quick dev sync (bypasses migration files).
+- For production, always use `pnpm drizzle-kit generate` + `pnpm drizzle-kit migrate` to maintain migration history.
+- If migrations fail, check that you're using `DATABASE_URL_UNPOOLED` (direct connection) — pooled connections via PgBouncer don't support DDL operations reliably.
+
+## Neon connection issues
+
+- **"prepared statement already exists":** You're using the pooled connection (`DATABASE_URL`) for an operation that needs the direct connection. Switch to `DATABASE_URL_UNPOOLED` for migrations and operations using prepared statements.
+- **Connection timeout on cold start:** Neon auto-suspends after ~5 minutes of inactivity. The first connection after suspend may take 0.5–2 seconds. This is normal — subsequent connections are instant.
+- **Branch not found:** Verify the branch exists with `neonctl branches list`. Preview branches are deleted when the PR is merged if using the GitHub integration.
 
 ## Vercel env mismatch (preview vs production)
 
@@ -42,7 +51,7 @@
 - Vercel env troubleshooting: https://vercel.com/docs/environment-variables
 - Vercel functions (Fluid Compute): https://vercel.com/docs/functions
 - Vercel runtime cache: https://vercel.com/docs/runtime-cache
-- Supabase SSR auth troubleshooting: https://supabase.com/docs/guides/auth/server-side
-- Supabase local development and migrations: https://supabase.com/docs/guides/local-development/overview
-- Supabase database migrations: https://supabase.com/docs/guides/deployment/database-migrations
-- Supabase Vercel integration: https://supabase.com/partners/integrations/vercel
+- Neon docs: https://neon.tech/docs
+- Neon connection pooling: https://neon.tech/docs/connect/connection-pooling
+- Better Auth docs: https://www.better-auth.com/docs
+- Drizzle ORM: https://orm.drizzle.team/docs/overview

@@ -11,7 +11,7 @@
 # - Hardcoded secrets: API keys, tokens, passwords in source
 # - eval() usage: code injection risk
 # - SQL string interpolation: SQL injection risk
-# - Supabase service-role key usage in client component paths
+# - Server-only secrets (DATABASE_URL, BETTER_AUTH_SECRET) in client component paths
 #
 # Usage:
 #   ./scripts/security-check.sh              # Warn only (exit 0)
@@ -47,10 +47,20 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   FILES=$(git diff --cached --name-only --diff-filter=ACM -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.py' 2>/dev/null || true)
   if [ -z "$FILES" ]; then
     # No staged files — check all source files
-    FILES=$(find "$PROJECT_DIR/src" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)
+    FILES=""
+    for _dir in "$PROJECT_DIR/src" "$PROJECT_DIR/app" "$PROJECT_DIR/pages" "$PROJECT_DIR/components"; do
+      [ -d "$_dir" ] && FILES="$FILES
+$(find "$_dir" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)"
+    done
+    FILES=$(echo "$FILES" | sed '/^$/d')
   fi
 else
-  FILES=$(find "$PROJECT_DIR/src" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)
+  FILES=""
+  for _dir in "$PROJECT_DIR/src" "$PROJECT_DIR/app" "$PROJECT_DIR/pages" "$PROJECT_DIR/components"; do
+    [ -d "$_dir" ] && FILES="$FILES
+$(find "$_dir" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" \) 2>/dev/null || true)"
+  done
+  FILES=$(echo "$FILES" | sed '/^$/d')
 fi
 
 if [ -z "$FILES" ]; then
@@ -115,13 +125,14 @@ for file in $FILES; do
       warn "SQL string interpolation — use parameterized queries" "$file" "$LINE_NUM"
     fi
 
-    # --- Supabase Service-Role Key in Client Paths ---
-    # The service-role key bypasses RLS and must never be used in client bundles.
-    # See: https://supabase.com/docs/guides/api/api-keys
-    if echo "$line" | grep -qE "SUPABASE_SERVICE_ROLE_KEY" 2>/dev/null; then
+    # --- Server-Only Secrets in Client Paths ---
+    # DATABASE_URL and BETTER_AUTH_SECRET must never appear in client bundles.
+    # See: https://neon.tech/docs/connect/connection-pooling
+    # See: https://www.better-auth.com/docs/installation
+    if echo "$line" | grep -qE "(DATABASE_URL|BETTER_AUTH_SECRET)" 2>/dev/null; then
       IS_CLIENT_FILE=false
       case "$file" in
-        */app/*|*/pages/*|*components/*) IS_CLIENT_FILE=true ;;
+        app/*|*/app/*|pages/*|*/pages/*|components/*|*/components/*) IS_CLIENT_FILE=true ;;
       esac
       # Also check if file contains "use client" directive in first 5 lines
       if [ "$IS_CLIENT_FILE" = false ] && head -5 "$file" | grep -qE '^\s*["'"'"']use client["'"'"']' 2>/dev/null; then
@@ -131,7 +142,7 @@ for file in $FILES; do
         TRIMMED=$(echo "$line" | sed 's/^[[:space:]]*//')
         case "$TRIMMED" in
           "//"*|"#"*|"*"*) ;; # skip comments
-          *) warn "SUPABASE_SERVICE_ROLE_KEY in client-accessible path — must be server-only" "$file" "$LINE_NUM" ;;
+          *) warn "Server-only secret (DATABASE_URL or BETTER_AUTH_SECRET) in client-accessible path" "$file" "$LINE_NUM" ;;
         esac
       fi
     fi

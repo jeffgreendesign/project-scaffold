@@ -1,35 +1,64 @@
 # AX_UPGRADE_REPORT.md
 
-## Inventory summary (Step 0) — 2026-03-04
+## Inventory summary (Step 0) — 2026-03-31
 
 - **Repository type:** Scaffold/template repository, not a runnable Next.js app.
 - **Next.js mode (App Router vs Pages):** Not present in this repo — templates target both.
-- **Auth approach:** Not implemented here; only template guidance and env var boundaries exist.
-- **Supabase client usage:** Not implemented; scaffold provides `.env.example` template and docs for downstream projects.
-- **Env var pattern:** `.env.example` in scaffold/ with `NEXT_PUBLIC_*` / server-only split. `.gitignore` blocks `.env`, `.env.local`, `.env.*.local`.
+- **Auth approach:** Better Auth — open-source, self-hosted auth storing sessions in Neon via Drizzle adapter. Template guidance and env var boundaries documented.
+- **Database:** Neon PostgreSQL with Drizzle ORM for schema management and migrations. Scaffold provides `.env.example` template and docs for downstream projects.
+- **File storage:** Vercel Blob — template guidance and env var documented.
+- **Env var pattern:** `.env.example` in scaffold/ with server-only secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BLOB_READ_WRITE_TOKEN`). `.gitignore` blocks `.env`, `.env.local`, `.env.*.local`.
 - **Package manager:** pnpm@10.6.0 (for this repo's maintenance commands).
 - **Lint/format/test/tooling:** Script-based validation (`scripts/check-templates.sh`, `bash -n` syntax checks, `scripts/scaffold.sh` smoke test, `scripts/generate-init.sh` build).
 - **CI status:** Two audit workflows (`health-audit.yml`, `cross-repo-align.yml`). No per-PR CI for this repo itself (scaffold validation runs via `pnpm verify`).
+
+## Changes made (2026-03-31 — free-tier stack upgrade)
+
+### Rationale
+
+Supabase free tier has significant limitations: projects pause after 7 days of inactivity, database branching requires a paid plan, only 2 free projects allowed. Replaced with Neon + Better Auth + Drizzle for a stronger free-tier developer experience.
+
+### Commit: Scaffold templates
+
+- Updated `scaffold/.env.example`: replaced all Supabase env vars with Neon (`DATABASE_URL`, `DATABASE_URL_UNPOOLED`), Better Auth (`BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`), and Vercel Blob (`BLOB_READ_WRITE_TOKEN`) vars.
+- Updated `scaffold/CLAUDE.md.template`: replaced Supabase migration recipe with Drizzle + Neon workflow; updated silent bugs section (DATABASE_URL/BETTER_AUTH_SECRET in client components).
+- Updated `scaffold/AGENTS.md.template`: added Neon, Better Auth, and Drizzle doc links to official references.
+- Updated `scaffold/scripts/security-check.sh`: replaced `SUPABASE_SERVICE_ROLE_KEY` client-path check with `DATABASE_URL` and `BETTER_AUTH_SECRET` client-path checks.
+- Updated `scaffold/.claude/settings.json`: replaced Supabase CLI commands with Drizzle Kit and Neon CLI commands.
+
+### Commit: Docs
+
+- Updated `docs/ARCHITECTURE.md`: replaced Supabase data layer with Neon + Drizzle + Better Auth patterns; added Vercel Blob guidance; updated official references.
+- Updated `docs/ENV.md`: replaced all Supabase env var documentation with Neon + Better Auth + Vercel Blob vars and rules.
+- Updated `docs/DECISIONS.md`: added 2026-03-31 decision entry documenting the stack upgrade rationale.
+- Updated `docs/RUNBOOK.md`: replaced Supabase workflow with Drizzle migration commands, Neon branching, Better Auth session management, Vercel Blob guidance.
+- Updated `docs/TROUBLESHOOTING.md`: replaced Supabase auth/migration sections with Better Auth troubleshooting, Drizzle migration drift, Neon connection issues.
+- Updated `docs/AX_UPGRADE_REPORT.md`: this file — updated inventory and changelog.
+
+### Commit: Root control-plane files
+
+- Updated `CLAUDE.md`: replaced Supabase references in sync rules, silent bugs, and official references with Neon/Better Auth equivalents.
+- Updated `AGENTS.md`: updated project snapshot, documentation map descriptions, and official references.
 
 ## Changes made (2026-03-04 refresh)
 
 ### Commit A: Docs + control-plane files
 - Updated `CLAUDE.md`: added `docs/DECISIONS.md` and `docs/TROUBLESHOOTING.md` to sync rules, added official references section with Vercel agent-resources links.
 - Updated `AGENTS.md`: expanded documentation map with all docs/* files, added official references section.
-- Updated `docs/ENV.md`: added `POSTGRES_URL`, `POSTGRES_URL_NON_POOLING`, `VERCEL_PROJECT_PRODUCTION_URL` vars; added Supabase publishable keys note; added framework env var and branching doc links.
-- Updated `docs/RUNBOOK.md`: added Supabase CLI migration commands, branching workflow, RLS testing guidance, Vercel system env var usage.
-- Updated `docs/ARCHITECTURE.md`: added Vercel Fluid Compute / `use cache` / `cacheLife` / `cacheTag` / `revalidateTag` caching patterns; added Supabase branching and migration guidance; updated doc links.
-- Updated `docs/DECISIONS.md`: added 2026-03-04 decision entry for this incremental refresh.
-- Updated `docs/TROUBLESHOOTING.md`: added Supabase migration drift section, Vercel Fluid Compute timeout section, improved existing entries.
+- Updated `docs/ENV.md`: added `POSTGRES_URL`, `POSTGRES_URL_NON_POOLING`, `VERCEL_PROJECT_PRODUCTION_URL` vars; added Supabase publishable keys note; added framework env var and branching doc links. *(Supabase vars later replaced by Neon equivalents in 2026-03-31 upgrade.)*
+- Updated `docs/RUNBOOK.md`: added Supabase CLI migration commands, branching workflow, RLS testing guidance, Vercel system env var usage. *(Supabase workflow later replaced by Drizzle + Neon in 2026-03-31 upgrade.)*
+- Updated `docs/ARCHITECTURE.md`: added Vercel Fluid Compute / `use cache` / `cacheLife` / `cacheTag` / `revalidateTag` caching patterns; added Supabase branching and migration guidance; updated doc links. *(Supabase guidance later replaced by Neon + Better Auth in 2026-03-31 upgrade.)*
+- Updated `docs/DECISIONS.md`: added 2026-03-04 decision entry for incremental refresh.
+- Updated `docs/TROUBLESHOOTING.md`: added Supabase migration drift section, Vercel Fluid Compute timeout section, improved existing entries. *(Supabase sections later replaced by Drizzle + Neon in 2026-03-31 upgrade.)*
 
 ### Commit B: Scaffold templates
-- Updated `scaffold/.env.example`: added `POSTGRES_URL` / `POSTGRES_URL_NON_POOLING` for migration/branching workflows, added Supabase publishable keys comment.
-- Updated `scaffold/CLAUDE.md.template`: added `verify` alias in Quick Reference, added Fluid Compute `maxDuration` to common mistakes, added Supabase migration workflow recipe.
+- Updated `scaffold/.env.example`: added `POSTGRES_URL` / `POSTGRES_URL_NON_POOLING` for migration/branching workflows, added Supabase publishable keys comment. *(Later replaced by Neon vars in 2026-03-31 upgrade.)*
+- Updated `scaffold/CLAUDE.md.template`: added `verify` alias in Quick Reference, added Fluid Compute `maxDuration` to common mistakes, added Supabase migration workflow recipe. *(Migration recipe later replaced by Drizzle workflow in 2026-03-31 upgrade.)*
 - Updated `scaffold/AGENTS.md.template`: added `verify` alias note, added Vercel agent-resources link.
 
 ### Commit C: Env var correctness + security hardening
-- Updated `scaffold/scripts/security-check.sh`: added check for `SUPABASE_SERVICE_ROLE_KEY` usage in client component paths.
-- Verified `scaffold/.claude/settings.json` includes Supabase CLI in allow list.
+- Updated `scaffold/scripts/security-check.sh`: added check for `SUPABASE_SERVICE_ROLE_KEY` usage in client component paths. *(Later replaced by DATABASE_URL / BETTER_AUTH_SECRET check in 2026-03-31 upgrade.)*
+- Verified `scaffold/.claude/settings.json` includes Supabase CLI in allow list. *(Later replaced by Drizzle Kit and Neon CLI in 2026-03-31 upgrade.)*
 - Verified `.gitignore` correctly blocks `.env*` files (no change needed).
 
 ## Why (official-doc links per change)
@@ -44,13 +73,15 @@
 - Vercel data cache and revalidation: https://vercel.com/docs/runtime-cache/data-cache
 - Vercel deployments: https://vercel.com/docs/deployments
 - Vercel preview deployments: https://vercel.com/docs/deployments/preview-deployments
-- Supabase local dev & migrations: https://supabase.com/docs/guides/local-development/overview
-- Supabase database migrations: https://supabase.com/docs/guides/deployment/database-migrations
-- Supabase branching: https://supabase.com/docs/guides/deployment/branching/working-with-branches
-- Supabase API keys (publishable keys): https://supabase.com/docs/guides/api/api-keys
-- Supabase auth SSR (Next.js): https://supabase.com/docs/guides/auth/server-side/nextjs
-- Supabase RLS: https://supabase.com/docs/guides/database/postgres/row-level-security
-- Supabase ↔ Vercel integration: https://supabase.com/partners/integrations/vercel
+- Vercel Blob: https://vercel.com/docs/storage/vercel-blob
+- Neon docs: https://neon.tech/docs
+- Neon branching: https://neon.tech/docs/introduction/branching
+- Neon connection pooling: https://neon.tech/docs/connect/connection-pooling
+- Neon Vercel integration: https://neon.tech/docs/guides/vercel
+- Better Auth docs: https://www.better-auth.com/docs
+- Better Auth Next.js integration: https://www.better-auth.com/docs/integrations/next
+- Drizzle ORM: https://orm.drizzle.team/docs/overview
+- Drizzle + Neon: https://orm.drizzle.team/docs/get-started/neon-new
 
 ## How to verify locally
 
@@ -70,10 +101,11 @@ Expected outcomes:
 - `pnpm verify` runs all four phases sequentially.
 - Scaffold copy (`./scripts/scaffold.sh /tmp/test`) creates files without errors.
 - All docs/*.md files contain an "Official references" section with valid links.
+- No remaining active guidance referencing Supabase in scaffold/ or docs/ files (historical/migration mentions in changelogs are expected).
 
 ## Follow-ups
 
-- **Follow-up:** Add a first-class Vercel + Supabase runnable sample app in `examples/` to validate runtime/caching guidance end-to-end.
+- **Follow-up:** Add a first-class Vercel + Neon + Better Auth runnable sample app in `examples/` to validate runtime/auth/migration guidance end-to-end.
 - **Follow-up:** Add optional secret scanning CI workflow template (gitleaks/git-secrets) to `scaffold/.github/workflows`.
-- **Follow-up:** Add Supabase publishable key detection to security-check.sh once the key format stabilizes.
-- **Follow-up:** Consider adding a `scaffold/.github/workflows/ci.yml` template that runs `supabase db push --dry-run` for migration validation in CI.
+- **Follow-up:** Add `scaffold/.github/workflows/ci.yml` template that validates migrations in CI — use `drizzle-kit push --verbose --strict` for review before confirming, or the programmatic API (`import { pushSchema } from 'drizzle-kit/api'`) to inspect `statementsToExecute` without calling `apply()`.
+- **Follow-up:** Add Better Auth provider configuration examples (GitHub, Google) to scaffold templates.
