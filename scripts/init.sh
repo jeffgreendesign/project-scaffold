@@ -235,6 +235,14 @@ write_file '.claude/settings.json' << 'SCAFFOLD_EOF__CLAUDE_SETTINGS_JSON_7f3d9a
       "Bash(pnpm drizzle-kit push*)",
       "Bash(pnpm drizzle-kit migrate*)",
       "Bash(pnpm drizzle-kit studio*)",
+      "Bash(npx drizzle-kit generate*)",
+      "Bash(npx drizzle-kit push*)",
+      "Bash(npx drizzle-kit migrate*)",
+      "Bash(npx drizzle-kit studio*)",
+      "Bash(yarn drizzle-kit generate*)",
+      "Bash(yarn drizzle-kit push*)",
+      "Bash(yarn drizzle-kit migrate*)",
+      "Bash(yarn drizzle-kit studio*)",
       "Bash(neonctl branches *)",
       "Bash(neonctl databases *)",
       "Bash(neonctl connection-string *)"
@@ -1580,7 +1588,7 @@ for file in $FILES; do
     if echo "$line" | grep -qE "(DATABASE_URL|BETTER_AUTH_SECRET)" 2>/dev/null; then
       IS_CLIENT_FILE=false
       case "$file" in
-        */app/*|*/pages/*|*components/*) IS_CLIENT_FILE=true ;;
+        */app/*|*/pages/*|*/components/*) IS_CLIENT_FILE=true ;;
       esac
       # Also check if file contains "use client" directive in first 5 lines
       if [ "$IS_CLIENT_FILE" = false ] && head -5 "$file" | grep -qE '^\s*["'"'"']use client["'"'"']' 2>/dev/null; then

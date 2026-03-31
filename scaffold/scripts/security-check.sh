@@ -122,7 +122,7 @@ for file in $FILES; do
     if echo "$line" | grep -qE "(DATABASE_URL|BETTER_AUTH_SECRET)" 2>/dev/null; then
       IS_CLIENT_FILE=false
       case "$file" in
-        */app/*|*/pages/*|*components/*) IS_CLIENT_FILE=true ;;
+        */app/*|*/pages/*|*/components/*) IS_CLIENT_FILE=true ;;
       esac
       # Also check if file contains "use client" directive in first 5 lines
       if [ "$IS_CLIENT_FILE" = false ] && head -5 "$file" | grep -qE '^\s*["'"'"']use client["'"'"']' 2>/dev/null; then

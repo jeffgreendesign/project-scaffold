@@ -107,5 +107,5 @@ Expected outcomes:
 
 - **Follow-up:** Add a first-class Vercel + Neon + Better Auth runnable sample app in `examples/` to validate runtime/auth/migration guidance end-to-end.
 - **Follow-up:** Add optional secret scanning CI workflow template (gitleaks/git-secrets) to `scaffold/.github/workflows`.
-- **Follow-up:** Add `scaffold/.github/workflows/ci.yml` template that runs `pnpm drizzle-kit push --dry-run` for migration validation in CI.
+- **Follow-up:** Add `scaffold/.github/workflows/ci.yml` template that validates migrations in CI — use `drizzle-kit push --verbose --strict` for review before confirming, or the programmatic API (`import { pushSchema } from 'drizzle-kit/api'`) to inspect `statementsToExecute` without calling `apply()`.
 - **Follow-up:** Add Better Auth provider configuration examples (GitHub, Google) to scaffold templates.
