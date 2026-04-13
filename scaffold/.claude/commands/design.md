@@ -1,4 +1,5 @@
 Research the codebase and propose an implementation design for: $ARGUMENTS
+<!-- Coordination pattern: Orchestrator-Subagent with human-in-the-loop verifier. See https://claude.com/blog/multi-agent-coordination-patterns -->
 
 ## Instructions
 
@@ -37,3 +38,5 @@ Present your findings and proposal in this structure:
 ## Critical Rule
 
 **Do NOT implement yet.** Present the proposal and wait for the user to review, annotate, and approve before writing any code. The user may correct assumptions, reject approaches, add constraints, or redirect the design. Implementation begins only after explicit approval.
+
+This research → propose → approve → implement loop is the Orchestrator-Subagent pattern; the human approval step is the verifier.

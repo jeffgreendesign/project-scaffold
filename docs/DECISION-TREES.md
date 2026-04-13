@@ -26,12 +26,12 @@ Use these flowcharts to decide which scaffold files your project needs. Not ever
 
 ### AGENTS.md
 
-**Answer: Create AGENTS.md for most projects.** Use it for agent operating instructions; keep the API section only when your project exposes external interfaces.
+**Answer: Create AGENTS.md for most projects.** Use it for agent operating instructions; keep the API section only when your project exposes external interfaces. Codex (GPT-5.4+) and Gemini CLI both read AGENTS.md automatically.
 
 ```text
 ┌────────────────────────────────────┐
-│ Will Codex/GPT agents work in this │
-│ repository?                         │
+│ Will Codex, GPT, or Gemini agents  │
+│ work in this repository?           │
 └──────────┬─────────────────────────┘
      ┌─────┴──────┐
      │             │
@@ -74,6 +74,26 @@ Use these flowcharts to decide which scaffold files your project needs. Not ever
      ▼             ▼
   Create        Skip
   llms.txt      llms.txt
+```
+
+### GEMINI.md
+
+**Answer: Create GEMINI.md if your team uses Gemini CLI or Gemini Code Assist.** Gemini also reads AGENTS.md as a fallback, so AGENTS.md alone may suffice for basic projects.
+
+```text
+┌──────────────────────────────┐
+│ Does your team use Gemini    │
+│ CLI or Gemini Code Assist?   │
+└──────────┬───────────────────┘
+     ┌─────┴──────┐
+     │             │
+    Yes           No
+     │             │
+     ▼             ▼
+  Create        Skip
+  GEMINI.md     (Gemini reads
+                 AGENTS.md as
+                 fallback)
 ```
 
 ### Cursor Rules

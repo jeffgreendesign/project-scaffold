@@ -1,7 +1,7 @@
 # AGENTS.md
 
 <!-- CUSTOMIZE: This file is for Codex/GPT-style agents. Keep it concise and executable. -->
-<!-- Codex 5.3+ reads AGENTS.md automatically before starting work (32 KiB limit). -->
+<!-- Codex (GPT-5.4+) and Gemini CLI read AGENTS.md automatically before starting work (32 KiB limit). -->
 <!-- Claude Code reads CLAUDE.md instead. Maintain both files if your team uses both tools. -->
 <!-- To make Codex also read CLAUDE.md, add it to project_doc_fallback_filenames in ~/.codex/config.toml -->
 
@@ -33,6 +33,7 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 2. Make minimal, targeted edits. Avoid broad refactors unless requested.
 3. Run `[pnpm gates]` before finishing.
 4. Update docs when behavior or interfaces change.
+5. For changes touching 3+ files or introducing new patterns, research the codebase and propose an approach before implementing. Wait for approval before writing code. (Orchestrator-Subagent pattern.)
 
 ## PR / Commit Requirements
 

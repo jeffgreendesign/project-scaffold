@@ -152,6 +152,7 @@ Tier 2 is about sustained quality across multiple sessions. NOW.md prevents cont
 |------|---------|
 | `llms.txt` | AI-readable project summary for external agents |
 | `AGENTS.md` | Codex/GPT agent instructions (+ optional external API guide) |
+| `GEMINI.md` | Gemini CLI / Code Assist context file |
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules for TypeScript conventions |
 | Decision trees in docs | Flowcharts for common architectural choices |
 
@@ -168,6 +169,7 @@ Tier 3 is for projects that are consumed by external agents or used in multi-age
 ### When to Implement
 
 - Always create AGENTS.md for Codex/GPT execution guidance
+- Team uses Gemini CLI or Gemini Code Assist → create GEMINI.md
 - Project is an open-source library → create llms.txt
 - Team uses Cursor → create .cursor/rules/
 - Architecture choices aren't obvious → create decision trees

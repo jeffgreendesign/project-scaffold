@@ -73,6 +73,7 @@ write_executable() {
 
 write_file '.claude/commands/design.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_DESIGN_MD_7f3d9a'
 Research the codebase and propose an implementation design for: $ARGUMENTS
+<!-- Coordination pattern: Orchestrator-Subagent with human-in-the-loop verifier. See https://claude.com/blog/multi-agent-coordination-patterns -->
 
 ## Instructions
 
@@ -111,6 +112,8 @@ Present your findings and proposal in this structure:
 ## Critical Rule
 
 **Do NOT implement yet.** Present the proposal and wait for the user to review, annotate, and approve before writing any code. The user may correct assumptions, reject approaches, add constraints, or redirect the design. Implementation begins only after explicit approval.
+
+This research → propose → approve → implement loop is the Orchestrator-Subagent pattern; the human approval step is the verifier.
 
 SCAFFOLD_EOF__CLAUDE_COMMANDS_DESIGN_MD_7f3d9a
 
@@ -569,7 +572,7 @@ write_file 'AGENTS.md' << 'SCAFFOLD_EOF_AGENTS_MD_TEMPLATE_7f3d9a'
 # AGENTS.md
 
 <!-- CUSTOMIZE: This file is for Codex/GPT-style agents. Keep it concise and executable. -->
-<!-- Codex 5.3+ reads AGENTS.md automatically before starting work (32 KiB limit). -->
+<!-- Codex (GPT-5.4+) and Gemini CLI read AGENTS.md automatically before starting work (32 KiB limit). -->
 <!-- Claude Code reads CLAUDE.md instead. Maintain both files if your team uses both tools. -->
 <!-- To make Codex also read CLAUDE.md, add it to project_doc_fallback_filenames in ~/.codex/config.toml -->
 
@@ -601,6 +604,7 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 2. Make minimal, targeted edits. Avoid broad refactors unless requested.
 3. Run `[pnpm gates]` before finishing.
 4. Update docs when behavior or interfaces change.
+5. For changes touching 3+ files or introducing new patterns, research the codebase and propose an approach before implementing. Wait for approval before writing code. (Orchestrator-Subagent pattern.)
 
 ## PR / Commit Requirements
 
@@ -931,6 +935,49 @@ When updating [X], also update:
 When renaming or moving a reference implementation file, also update the Reference Implementations table above.
 
 SCAFFOLD_EOF_CLAUDE_MD_TEMPLATE_7f3d9a
+
+write_file 'GEMINI.md' << 'SCAFFOLD_EOF_GEMINI_MD_TEMPLATE_7f3d9a'
+# GEMINI.md
+
+<!-- CUSTOMIZE: Replace everything in [brackets] with your project values -->
+<!-- Gemini CLI and Gemini Code Assist read this file automatically. -->
+<!-- Keep it concise — delegate to CLAUDE.md for full architecture and conventions. -->
+
+## Project Overview
+
+[One paragraph: what this project does, who it's for, what problem it solves.]
+
+## Commands
+
+<!-- CUSTOMIZE: Adjust to match your project's package manager and scripts -->
+
+```bash
+# Quality gates (run before every commit)
+[npm run gates] / [pnpm gates] / [yarn gates]   # alias: verify
+
+# Individual checks
+[npm run lint] / [pnpm lint] / [yarn lint]
+[npm run typecheck] / [pnpm typecheck] / [yarn typecheck]
+[npm run test] / [pnpm test] / [yarn test]
+[npm run build] / [pnpm build] / [yarn build]
+```
+
+## Working Rules
+
+<!-- CUSTOMIZE: Add repo-specific constraints that prevent expensive mistakes. -->
+
+1. Use the quality gate command above before finishing any task.
+2. Make minimal, targeted edits. Avoid broad refactors unless requested.
+3. Update docs when behavior or interfaces change.
+4. For changes touching 3+ files or introducing new patterns, research the codebase and propose an approach before implementing. Wait for approval before writing code. (Orchestrator-Subagent pattern.)
+
+## More Context
+
+- `CLAUDE.md` — full project architecture, conventions, debug playbook, and recipes
+- `AGENTS.md` — commit/PR requirements and documentation map
+- `NOW.md` — current sprint status and next actions
+
+SCAFFOLD_EOF_GEMINI_MD_TEMPLATE_7f3d9a
 
 write_file 'NOW.md' << 'SCAFFOLD_EOF_NOW_MD_TEMPLATE_7f3d9a'
 # What's Happening Now

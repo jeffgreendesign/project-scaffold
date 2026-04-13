@@ -2,6 +2,12 @@
 
 ## Decision log
 
+### 2026-04-12 — Adopt coordination-patterns vocabulary; standardize plan-first workflow across Claude, Codex, and Gemini
+
+- **Context:** Anthropic blog published 2026-04-10 names five multi-agent coordination patterns. Scaffold already ships primitives (`design.md`, `gates.md`, `NOW.md`) that map to three of these patterns but doesn't use the vocabulary. The plan-first workflow only reaches Claude Code via `/design`; Codex (GPT-5.4) and Gemini (3.0/3.1) agents lack equivalent guidance. No `GEMINI.md` template exists.
+- **Decision:** (1) Add `docs/COORDINATION-PATTERNS.md` mapping patterns to scaffold primitives across all platforms. (2) Add plan-first working rule to `scaffold/AGENTS.md.template` for Codex/Gemini. (3) Add `scaffold/GEMINI.md.template`. (4) Annotate `design.md` and `ANTI-PATTERNS.md` with pattern names. (5) Add `GEMINI.md` to Tier 3 and decision trees.
+- **Reasoning:** Least-change approach. No behavioral changes to existing Claude workflow. Extends the same Orchestrator-Subagent default to all three frontier coding-agent models. Preserves framework-agnostic philosophy. Aligns with the blog's "start simple, evolve when symptoms appear" recommendation — matches the scaffold's incremental-tier philosophy.
+
 ### 2026-03-31 — Upgrade free-tier stack: Supabase → Neon + Better Auth + Drizzle
 
 - **Context:** Supabase free tier has significant limitations: projects pause after 7 days of inactivity, database branching requires a paid plan, and only 2 free projects are allowed. Auth is tightly coupled to Supabase infrastructure.

@@ -1,0 +1,39 @@
+# GEMINI.md
+
+<!-- CUSTOMIZE: Replace everything in [brackets] with your project values -->
+<!-- Gemini CLI and Gemini Code Assist read this file automatically. -->
+<!-- Keep it concise — delegate to CLAUDE.md for full architecture and conventions. -->
+
+## Project Overview
+
+[One paragraph: what this project does, who it's for, what problem it solves.]
+
+## Commands
+
+<!-- CUSTOMIZE: Adjust to match your project's package manager and scripts -->
+
+```bash
+# Quality gates (run before every commit)
+[npm run gates] / [pnpm gates] / [yarn gates]   # alias: verify
+
+# Individual checks
+[npm run lint] / [pnpm lint] / [yarn lint]
+[npm run typecheck] / [pnpm typecheck] / [yarn typecheck]
+[npm run test] / [pnpm test] / [yarn test]
+[npm run build] / [pnpm build] / [yarn build]
+```
+
+## Working Rules
+
+<!-- CUSTOMIZE: Add repo-specific constraints that prevent expensive mistakes. -->
+
+1. Use the quality gate command above before finishing any task.
+2. Make minimal, targeted edits. Avoid broad refactors unless requested.
+3. Update docs when behavior or interfaces change.
+4. For changes touching 3+ files or introducing new patterns, research the codebase and propose an approach before implementing. Wait for approval before writing code. (Orchestrator-Subagent pattern.)
+
+## More Context
+
+- `CLAUDE.md` — full project architecture, conventions, debug playbook, and recipes
+- `AGENTS.md` — commit/PR requirements and documentation map
+- `NOW.md` — current sprint status and next actions

@@ -1,5 +1,25 @@
 # AX_UPGRADE_REPORT.md
 
+## Changes made (2026-04-12 — coordination-patterns vocabulary + cross-model standardization)
+
+### Rationale
+
+Anthropic published ["Multi-agent coordination patterns: Five approaches and when to use them"](https://claude.com/blog/multi-agent-coordination-patterns) on 2026-04-10. The scaffold already shipped primitives mapping to three of the five patterns (Orchestrator-Subagent, Generator-Verifier, Shared State) but didn't name them. The plan-first workflow only reached Claude Code via `/design`; Codex (GPT-5.4) and Gemini (3.0/3.1) agents lacked equivalent guidance. No `GEMINI.md` template existed.
+
+### Commit: Documentation
+
+- Created `docs/COORDINATION-PATTERNS.md`: model-agnostic reference mapping five patterns to scaffold primitives across Claude, Codex, and Gemini platforms.
+- Updated `docs/ANTI-PATTERNS.md`: named the Orchestrator-Subagent pattern in row 25; added new row 26 warning against premature adoption of agent teams, message buses, or shared-state loops.
+- Updated `docs/DECISIONS.md`: added 2026-04-12 decision entry documenting the vocabulary adoption and cross-model standardization rationale.
+- Updated `docs/TIERS.md`: added `GEMINI.md` to Tier 3 file list and "When to Implement" guidance.
+- Updated `docs/DECISION-TREES.md`: broadened AGENTS.md decision tree to include Gemini; added new GEMINI.md decision tree.
+
+### Commit: Scaffold templates
+
+- Updated `scaffold/AGENTS.md.template`: added plan-first working rule (rule 5) for Orchestrator-Subagent pattern; updated Codex version reference from 5.3+ to GPT-5.4+; added Gemini CLI as a reader.
+- Updated `scaffold/.claude/commands/design.md`: added pattern attribution comment and sentence naming the Orchestrator-Subagent pattern.
+- Created `scaffold/GEMINI.md.template`: minimal Gemini CLI / Code Assist context file with commands, plan-first working rule, and pointers to CLAUDE.md and AGENTS.md.
+
 ## Inventory summary (Step 0) — 2026-03-31
 
 - **Repository type:** Scaffold/template repository, not a runnable Next.js app.
@@ -63,6 +83,10 @@ Supabase free tier has significant limitations: projects pause after 7 days of i
 
 ## Why (official-doc links per change)
 
+- Anthropic multi-agent coordination patterns (2026-04-10): https://claude.com/blog/multi-agent-coordination-patterns
+- AGENTS.md open standard: https://agents.md/
+- OpenAI Codex AGENTS.md guide: https://developers.openai.com/codex/guides/agents-md
+- Gemini CLI GEMINI.md: https://geminicli.com/docs/cli/gemini-md/
 - Vercel agent resources: https://vercel.com/docs/agent-resources
 - Vercel agent skills: https://vercel.com/docs/agent-resources/skills
 - Vercel environment variables: https://vercel.com/docs/environment-variables
