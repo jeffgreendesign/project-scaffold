@@ -14,13 +14,13 @@
 
 ```bash
 # Quality gates (run before every commit)
-[pnpm gates]   # alias: verify
+[npm run gates] / [pnpm gates] / [yarn gates]   # alias: verify
 
 # Individual checks
-[pnpm lint]
-[pnpm typecheck]
-[pnpm test]
-[pnpm build]
+[npm run lint] / [pnpm lint] / [yarn lint]
+[npm run typecheck] / [pnpm typecheck] / [yarn typecheck]
+[npm run test] / [pnpm test] / [yarn test]
+[npm run build] / [pnpm build] / [yarn build]
 ```
 
 ## Working Rules

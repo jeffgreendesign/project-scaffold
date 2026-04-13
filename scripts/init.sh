@@ -73,7 +73,7 @@ write_executable() {
 
 write_file '.claude/commands/design.md' << 'SCAFFOLD_EOF__CLAUDE_COMMANDS_DESIGN_MD_7f3d9a'
 Research the codebase and propose an implementation design for: $ARGUMENTS
-<!-- Coordination pattern: Orchestrator-Subagent with human-in-the-loop verifier. See docs/COORDINATION-PATTERNS.md. -->
+<!-- Coordination pattern: Orchestrator-Subagent with human-in-the-loop verifier. See https://claude.com/blog/multi-agent-coordination-patterns -->
 
 ## Instructions
 
@@ -953,13 +953,13 @@ write_file 'GEMINI.md' << 'SCAFFOLD_EOF_GEMINI_MD_TEMPLATE_7f3d9a'
 
 ```bash
 # Quality gates (run before every commit)
-[pnpm gates]   # alias: verify
+[npm run gates] / [pnpm gates] / [yarn gates]   # alias: verify
 
 # Individual checks
-[pnpm lint]
-[pnpm typecheck]
-[pnpm test]
-[pnpm build]
+[npm run lint] / [pnpm lint] / [yarn lint]
+[npm run typecheck] / [pnpm typecheck] / [yarn typecheck]
+[npm run test] / [pnpm test] / [yarn test]
+[npm run build] / [pnpm build] / [yarn build]
 ```
 
 ## Working Rules

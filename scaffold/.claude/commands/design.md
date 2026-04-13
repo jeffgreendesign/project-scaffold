@@ -1,5 +1,5 @@
 Research the codebase and propose an implementation design for: $ARGUMENTS
-<!-- Coordination pattern: Orchestrator-Subagent with human-in-the-loop verifier. See docs/COORDINATION-PATTERNS.md. -->
+<!-- Coordination pattern: Orchestrator-Subagent with human-in-the-loop verifier. See https://claude.com/blog/multi-agent-coordination-patterns -->
 
 ## Instructions
 
