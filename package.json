@@ -8,6 +8,7 @@
     "typecheck": "bash -n scripts/*.sh scaffold/scripts/*.sh",
     "test": "./scripts/scaffold.sh /tmp/project-scaffold-smoke > /tmp/project-scaffold-smoke.log",
     "build": "./scripts/generate-init.sh && bash -n scripts/init.sh",
+    "repo-health:audit": "node scripts/audit-public-repos.mjs",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   }
 }
