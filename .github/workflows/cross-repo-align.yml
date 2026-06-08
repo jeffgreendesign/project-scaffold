@@ -48,7 +48,7 @@ jobs:
 
     steps:
       - name: Checkout ${{ matrix.repo }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ matrix.owner }}/${{ matrix.repo }}
           token: ${{ secrets.REPO_AUDIT_TOKEN }}
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Download all repo info
         uses: actions/download-artifact@v4
