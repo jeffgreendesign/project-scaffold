@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "owner": "jeffgreendesign",
+  "safety": {
+    "privateCurrentContext": "hire-jeff-green-nextjs is the current/new hirejeffgreen source and is private. Do not query it or expose details.",
+    "rules": [
+      "Query public GitHub metadata only.",
+      "Do not mutate repositories, issues, pull requests, settings, or files.",
+      "Do not include private, work, customer, Hermes/session, family, or health details.",
+      "Do not include real lead, customer, or person data.",
+      "Do not make unsupported production claims."
+    ]
+  },
+  "targets": [
+    {
+      "kind": "profile",
+      "owner": "jeffgreendesign",
+      "classification": "profile",
+      "notes": "Public GitHub profile metadata only."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "commerce-changeset",
+      "classification": "flagship",
+      "notes": "Primary portfolio proof."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "ops-signal-console",
+      "classification": "flagship/supporting proof",
+      "notes": "Ops visibility proof."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "guardrail-sim",
+      "classification": "flagship/supporting proof",
+      "notes": "Safety and guardrail proof."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "textrawl",
+      "classification": "flagship/supporting proof",
+      "notes": "Text extraction proof."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "lead-enrichment-api",
+      "classification": "supporting proof",
+      "notes": "API proof. Use sample/synthetic data only."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "mdyoink",
+      "classification": "utility/supporting proof",
+      "notes": "Small utility proof."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "project-scaffold",
+      "classification": "utility/supporting proof",
+      "notes": "Reusable scaffold and AX proof."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "holo-type",
+      "classification": "supporting proof",
+      "notes": "Supporting project proof."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "hire-jeff-green-11ty",
+      "classification": "legacy",
+      "notes": "Legacy public hire site source. Current/new source is private and out of scope."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "slate-ev-fan-api",
+      "classification": "needs decision/defer",
+      "notes": "Defer until a keep/archive/update decision is made."
+    },
+    {
+      "kind": "repo",
+      "owner": "jeffgreendesign",
+      "name": "alumni-charity-challenge-11ty",
+      "classification": "legacy/defer",
+      "notes": "Legacy project. Defer unless needed for context."
+    }
+  ]
+}
