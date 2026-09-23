@@ -26,11 +26,11 @@ Use these flowcharts to decide which scaffold files your project needs. Not ever
 
 ### AGENTS.md
 
-**Answer: Create AGENTS.md for most projects.** Use it for agent operating instructions; keep the API section only when your project exposes external interfaces. Codex (GPT-5.4+) and Gemini CLI both read AGENTS.md automatically.
+**Answer: Create AGENTS.md for most projects.** Use it for agent operating instructions; keep the API section only when your project exposes external interfaces. Codex (GPT-6 Astra) and Grok Build (Grok 4.7) read AGENTS.md as their primary instructions, Gemini CLI reads it as a fallback, and the scaffold's CLAUDE.md imports it for Claude Code. See [FRONTIER-MODELS.md](FRONTIER-MODELS.md).
 
 ```text
 ┌────────────────────────────────────┐
-│ Will Codex, GPT, or Gemini agents  │
+│ Will Codex, Grok, or Gemini agents │
 │ work in this repository?           │
 └──────────┬─────────────────────────┘
      ┌─────┴──────┐

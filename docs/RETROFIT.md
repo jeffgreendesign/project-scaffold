@@ -30,7 +30,7 @@ Run through this checklist to identify what your project is missing:
 | Compatibility matrix in CLAUDE.md (libraries) | ☐ | Medium |
 | Workspace boundary tests (monorepos) | ☐ | Medium |
 | llms.txt | ☐ | Low |
-| AGENTS.md (Codex/GPT operating instructions) | ☐ | Low |
+| AGENTS.md (shared rules for Codex, Grok, Gemini, Claude) | ☐ | Low |
 | Cursor rules | ☐ | Low |
 
 ---
@@ -157,9 +157,9 @@ Copy `scaffold/.cursor/rules/typescript.mdc` and customize:
 - Update the glob patterns for your file structure
 - Add project-specific rules for common mistakes
 
-### 2. Create AGENTS.md (for Codex/GPT compatibility)
+### 2. Create AGENTS.md (shared rules for every agent)
 
-Create this for all projects so Codex/GPT agents have explicit working rules. Copy `scaffold/AGENTS.md.template` and fill in:
+Create this for all projects so every agent (Codex, Grok Build, Gemini, and Claude Code through the `@AGENTS.md` import in CLAUDE.md) gets the same working rules. Copy `scaffold/AGENTS.md.template` and fill in:
 - Scope + project snapshot
 - First commands and working rules
 - PR/commit requirements

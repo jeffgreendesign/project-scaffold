@@ -39,7 +39,7 @@ curl -sL https://raw.githubusercontent.com/jeffgreendesign/project-scaffold/main
 
 ### Option D: AI Agent Setup
 
-Paste this prompt into Claude Code, Codex, or Cursor:
+Paste this prompt into Claude Code, Codex, Grok Build, or Cursor:
 
 ```text
 Fetch the project-scaffold template by running:
@@ -67,11 +67,13 @@ Every file in `scaffold/` with its purpose:
 |------|---------|
 | `CLAUDE.md.template` | Project context for LLM agents — commands, architecture, conventions |
 | `NOW.md.template` | Session state tracker — prevents context loss between sessions |
-| `AGENTS.md.template` | Codex/GPT agent instructions + optional external API guide |
+| `AGENTS.md.template` | Shared agent rules (Codex, Grok Build, Gemini; imported by CLAUDE.md) + optional external API guide |
+| `GEMINI.md.template` | Gemini CLI / Code Assist context file |
 | `llms.txt.template` | AI-readable project summary for discovery |
 | `.env.example` | Environment variable documentation with examples |
 | `CHANGELOG.md` | Changelog starter following Keep a Changelog format |
 | `.claude/settings.json` | Pre-approved safe commands, blocked destructive operations |
+| `.claude/rules/typescript.md` | Path-scoped TypeScript rules (Claude Code, Grok Build) |
 | `.claude/commands/gates.md` | Slash command: run all quality gates |
 | `.claude/commands/new-component.md` | Slash command: create component following conventions |
 | `.claude/commands/design.md` | Slash command: research codebase and propose plan before implementing |
@@ -172,6 +174,7 @@ The core loop: **Tell → Enforce → Fail Fast.**
 | [docs/ANTI-PATTERNS.md](docs/ANTI-PATTERNS.md) | What not to do — common mistakes and fixes |
 | [docs/DECISION-TREES.md](docs/DECISION-TREES.md) | Flowcharts for choosing which files you need |
 | [docs/EXAMPLES.md](docs/EXAMPLES.md) | Before/after examples showing the impact |
+| [docs/FRONTIER-MODELS.md](docs/FRONTIER-MODELS.md) | Current frontier models and which instruction files each agent reads |
 
 ---
 

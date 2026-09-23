@@ -1,5 +1,24 @@
 # AX_UPGRADE_REPORT.md
 
+## Changes made (2026-09-23 — frontier model refresh: Opus 5.5, Fable 5.1, GPT-6 Astra, Grok 4.7)
+
+### Rationale
+
+See the 2026-09-23 entry in `docs/DECISIONS.md`. Short version: every current agent can reach AGENTS.md, but only Codex relied on it. Claude Code skipped it, and Grok Build merged it with CLAUDE.md, so contradictions between the two files reached the model.
+
+### Documentation
+
+- Created `docs/FRONTIER-MODELS.md`: model matrix (IDs, context, effort defaults), per-tool instruction-file loading table, per-model tuning, and sources.
+- Updated `docs/DECISIONS.md`, `docs/COORDINATION-PATTERNS.md` (Grok Build row, GPT-6 Astra, current Codex docs URL), `docs/DECISION-TREES.md`, `docs/TIERS.md`, `docs/GUIDE.md` (AGENTS.md entry, new `.claude/rules/` entry), `docs/RETROFIT.md`, `README.md`, and root `AGENTS.md` doc map.
+
+### Scaffold templates
+
+- `scaffold/AGENTS.md.template`: rewrote the header comment to list who reads the file; added Definition of Done, Long-Running and Unattended Work, and Untrusted Content and Current Facts sections.
+- `scaffold/CLAUDE.md.template`: added the `@AGENTS.md` import and guidance on keeping the file under 200 lines.
+- Created `scaffold/.claude/rules/typescript.md`: path-scoped equivalent of the Cursor TypeScript rules.
+- `scaffold/NOW.md.template`: noted its role as the checklist for unattended runs.
+- `scripts/scaffold.sh`, `scripts/generate-init.sh`: next-steps text updated. Regenerated `scripts/init.sh`.
+
 ## Changes made (2026-04-12 — coordination-patterns vocabulary + cross-model standardization)
 
 ### Rationale

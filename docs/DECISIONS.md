@@ -2,6 +2,12 @@
 
 ## Decision log
 
+### 2026-09-23 — Make AGENTS.md the shared cross-agent file; tune templates for Opus 5.5, Fable 5.1, GPT-6 Astra, and Grok 4.7
+
+- **Context:** Four frontier coding models are current: Claude Opus 5.5 (released 2026-09-22), Claude Fable 5.1, GPT-6 Astra (2026-09-03, Codex), and Grok 4.7 (2026-09-21, Grok Build). The tools read instruction files differently. Codex reads AGENTS.md only. Grok Build reads AGENTS.md **and** CLAUDE.md and merges them. Claude Code reads AGENTS.md only when no CLAUDE.md exists. As a result, rules in the scaffold's AGENTS.md (working rules, PR requirements) never reached Claude Code, and the two files could contradict each other under Grok. Opus 5.5 guidance also flags early stops in unattended runs, and the GPT-6 Astra system card flags reduced chain-of-thought monitorability.
+- **Decision:** (1) CLAUDE.md template imports `@AGENTS.md`. Shared rules live only in AGENTS.md. (2) Add "Definition of Done", "Long-Running and Unattended Work", and "Untrusted Content and Current Facts" sections to the AGENTS.md template. (3) Add path-scoped `.claude/rules/typescript.md` (read by Claude Code and Grok Build). (4) NOW.md doubles as the task checklist for unattended runs. (5) Add `docs/FRONTIER-MODELS.md` with the model and loader matrix and per-model tuning. (6) Replace stale GPT-5.4 references.
+- **Reasoning:** One shared file that every agent reaches, with the deep architecture kept in CLAUDE.md, removes both the drift and the contradiction risk without new tooling. Model-specific settings (effort, context, compaction) are tool configuration, not repo instructions, so they go in docs rather than templates. Skills migration (`.claude/commands` → `.claude/skills`, plus `.agents/skills` for Codex) is deferred. Commands still work in Claude Code, and cross-tool skill discovery paths aren't yet consistent.
+
 ### 2026-04-12 — Adopt coordination-patterns vocabulary; standardize plan-first workflow across Claude, Codex, and Gemini
 
 - **Context:** Anthropic blog published 2026-04-10 names five multi-agent coordination patterns. Scaffold already ships primitives (`design.md`, `gates.md`, `NOW.md`) that map to three of these patterns but doesn't use the vocabulary. The plan-first workflow only reaches Claude Code via `/design`; Codex (GPT-5.4) and Gemini (3.0/3.1) agents lack equivalent guidance. No `GEMINI.md` template exists.

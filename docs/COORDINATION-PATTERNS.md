@@ -3,7 +3,7 @@
 How the scaffold maps to Anthropic's five multi-agent coordination patterns, published 2026-04-10:
 https://claude.com/blog/multi-agent-coordination-patterns
 
-These patterns apply regardless of which AI coding tool your team uses (Claude Code, Codex, Gemini CLI, Cursor, etc.). The scaffold delivers the same coordination guidance across platforms through platform-specific instruction files.
+These patterns apply regardless of which AI coding tool your team uses (Claude Code, Codex, Grok Build, Gemini CLI, Cursor, etc.). The scaffold delivers the same coordination guidance across platforms through platform-specific instruction files.
 
 ---
 
@@ -11,7 +11,7 @@ These patterns apply regardless of which AI coding tool your team uses (Claude C
 
 | Pattern | Scaffold primitive | Platform delivery | Default? |
 |---------|-------------------|-------------------|----------|
-| **Orchestrator-Subagent** | Plan-first workflow | Claude: `/design` command; Codex/Gemini: AGENTS.md rule 5 | **Yes — default** |
+| **Orchestrator-Subagent** | Plan-first workflow | Claude: `/design` command; Codex/Grok/Gemini: AGENTS.md rule 5 | **Yes — default** |
 | **Generator-Verifier** | Quality gate | All platforms: `pnpm verify` / `gates` + `tests/test_architecture.ts` | Yes — always-on |
 | **Shared State** | Session context | All platforms: `NOW.md` | Yes (Tier 2+) |
 | **Agent Teams** | Not provided | Use platform-native parallel agents when needed | No |
@@ -40,7 +40,8 @@ The human approval step (step 3) is the key differentiator from a naive orchestr
 | Platform | Mechanism | File |
 |----------|-----------|------|
 | Claude Code | `/design` slash command | `scaffold/.claude/commands/design.md` |
-| Codex (GPT-5.4+) | Working rule 5 in AGENTS.md | `scaffold/AGENTS.md.template` |
+| Codex (GPT-6 Astra) | Working rule 5 in AGENTS.md | `scaffold/AGENTS.md.template` |
+| Grok Build (Grok 4.7) | Working rule 5 in AGENTS.md (maps onto Grok Build's Plan Mode) | `scaffold/AGENTS.md.template` |
 | Gemini CLI / Code Assist | Working rule in GEMINI.md + AGENTS.md fallback | `scaffold/GEMINI.md.template` |
 | Cursor | Inherits from CLAUDE.md conventions | `.cursor/rules/` |
 
@@ -91,5 +92,7 @@ Do not adopt Agent Teams, Message Bus, or Shared State loops preemptively. The c
 - Anthropic multi-agent coordination patterns (2026-04-10): https://claude.com/blog/multi-agent-coordination-patterns
 - Anthropic building multi-agent systems: https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them
 - AGENTS.md open standard: https://agents.md/
-- OpenAI Codex AGENTS.md guide: https://developers.openai.com/codex/guides/agents-md
+- OpenAI Codex AGENTS.md guide: https://learn.chatgpt.com/docs/agent-configuration/agents-md
+- Grok Build project rules: https://docs.x.ai/build/features/project-rules
+- Per-model notes: [FRONTIER-MODELS.md](FRONTIER-MODELS.md)
 - Gemini CLI GEMINI.md: https://geminicli.com/docs/cli/gemini-md/
