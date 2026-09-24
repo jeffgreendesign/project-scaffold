@@ -2,7 +2,7 @@
 
 <!-- CUSTOMIZE: This is the shared instruction file for every coding agent. Keep it concise and executable. -->
 <!-- Read by: Codex / GPT-6 Astra (primary, 32 KiB combined limit), Grok Build / Grok 4.7 (alongside CLAUDE.md), -->
-<!-- Gemini CLI (fallback), and Claude Code (via the @AGENTS.md import at the top of CLAUDE.md). -->
+<!-- Claude Code (via the @AGENTS.md import at the top of CLAUDE.md), and Gemini CLI only if context.fileName lists it. -->
 <!-- Put shared rules here and deep architecture in CLAUDE.md. Never state the same fact differently in both: -->
 <!-- Grok Build loads both files, so contradictions reach the model. See docs/FRONTIER-MODELS.md in project-scaffold. -->
 

@@ -4,7 +4,7 @@
 
 ### Rationale
 
-See the 2026-09-23 entry in `docs/DECISIONS.md`. Short version: every current agent can reach AGENTS.md, but only Codex relied on it. Claude Code skipped it, and Grok Build merged it with CLAUDE.md, so contradictions between the two files reached the model.
+See the 2026-09-23 entry in `docs/DECISIONS.md`. Short version: Codex, Grok Build, and Claude Code can all reach AGENTS.md (Gemini CLI only via `context.fileName`), but only Codex relied on it. Claude Code skipped it, and Grok Build merged it with CLAUDE.md, so contradictions between the two files reached the model.
 
 ### Documentation
 
@@ -16,6 +16,7 @@ See the 2026-09-23 entry in `docs/DECISIONS.md`. Short version: every current ag
 - `scaffold/AGENTS.md.template`: rewrote the header comment to list who reads the file; added Definition of Done, Long-Running and Unattended Work, and Untrusted Content and Current Facts sections.
 - `scaffold/AGENTS.md.template` (follow-up, checked against official OpenAI docs): added an instruction-precedence line; replaced "run gates before finishing" with explicit permission to run gates, fix, and rerun; tied Documentation Map entries to the tasks that need them; narrowed the test requirement to risky or user-facing changes.
 - `docs/FRONTIER-MODELS.md` (follow-up): rewrote the GPT-6 Astra section from OpenAI's model page, model guidance, Codex config/hooks reference, and system card. This corrected the hook syntax (`PreToolUse` + `permissionDecision: "deny"`, not `pre_tool_use`/exit 2), the context-management key, and the note that `approval_policy = "untrusted"` is no longer supported. Dropped the community source.
+- Review follow-up (CodeRabbit): corrected Gemini CLI claims across docs (it reads `GEMINI.md` by default and `AGENTS.md` only via `context.fileName`); moved AGENTS.md to Tier 0 and told Option E users to copy it alongside CLAUDE.md, since the template imports it.
 - `scaffold/CLAUDE.md.template`: added the `@AGENTS.md` import and guidance on keeping the file under 200 lines.
 - Created `scaffold/.claude/rules/typescript.md`: path-scoped equivalent of the Cursor TypeScript rules.
 - `scaffold/NOW.md.template`: noted its role as the checklist for unattended runs.

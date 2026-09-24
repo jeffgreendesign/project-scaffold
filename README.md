@@ -55,7 +55,7 @@ Then customize every .template file in the project:
 
 ### Option E: Cherry-Pick Individual Files
 
-Browse the `scaffold/` directory and copy only the files you need.
+Browse the `scaffold/` directory and copy only the files you need. If you copy `CLAUDE.md.template`, copy `AGENTS.md.template` too — the CLAUDE.md template imports it with `@AGENTS.md`.
 
 ---
 
@@ -67,7 +67,7 @@ Every file in `scaffold/` with its purpose:
 |------|---------|
 | `CLAUDE.md.template` | Project context for LLM agents — commands, architecture, conventions |
 | `NOW.md.template` | Session state tracker — prevents context loss between sessions |
-| `AGENTS.md.template` | Shared agent rules (Codex, Grok Build, Gemini; imported by CLAUDE.md) + optional external API guide |
+| `AGENTS.md.template` | Shared agent rules (Codex, Grok Build; imported by CLAUDE.md) + optional external API guide |
 | `GEMINI.md.template` | Gemini CLI / Code Assist context file |
 | `llms.txt.template` | AI-readable project summary for discovery |
 | `.env.example` | Environment variable documentation with examples |
@@ -104,12 +104,12 @@ Adopt incrementally. Each tier builds on the previous one. See [docs/TIERS.md](d
 
 | Tier | Time | What You Get | Key Files |
 |------|------|-------------|-----------|
-| **0** | 15 min | LLM can work autonomously | CLAUDE.md, settings.json, .env.example, `gates` script |
+| **0** | 15 min | LLM can work autonomously | CLAUDE.md, AGENTS.md, settings.json, .env.example, `gates` script |
 | **1** | 1 hr | Mistakes caught before repo | linter, strict types, hooks, CI, .node-version |
 | **2** | 2-3 hrs | Sustained multi-session quality | NOW.md, commands, guardrail tests, changelog |
-| **3** | optional | Multi-agent discoverability and DX | llms.txt, AGENTS.md, Cursor rules |
+| **3** | optional | Multi-agent discoverability and DX | llms.txt, GEMINI.md, Cursor rules |
 
-**Start with Tier 0.** If you can only do one thing: write the CLAUDE.md.
+**Start with Tier 0.** If you can only do one thing: write the CLAUDE.md (with the AGENTS.md it imports).
 
 ---
 

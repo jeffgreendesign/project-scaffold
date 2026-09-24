@@ -30,7 +30,7 @@ Run through this checklist to identify what your project is missing:
 | Compatibility matrix in CLAUDE.md (libraries) | ☐ | Medium |
 | Workspace boundary tests (monorepos) | ☐ | Medium |
 | llms.txt | ☐ | Low |
-| AGENTS.md (shared rules for Codex, Grok, Gemini, Claude) | ☐ | Low |
+| AGENTS.md (shared rules for Codex, Grok, Claude) | ☐ | Low |
 | Cursor rules | ☐ | Low |
 
 ---
@@ -159,7 +159,7 @@ Copy `scaffold/.cursor/rules/typescript.mdc` and customize:
 
 ### 2. Create AGENTS.md (shared rules for every agent)
 
-Create this for all projects so every agent (Codex, Grok Build, Gemini, and Claude Code through the `@AGENTS.md` import in CLAUDE.md) gets the same working rules. Copy `scaffold/AGENTS.md.template` and fill in:
+Create this for all projects so Codex, Grok Build, and Claude Code (through the `@AGENTS.md` import in CLAUDE.md) get the same working rules. Gemini CLI reads `GEMINI.md` by default and reads `AGENTS.md` only if you add it to `context.fileName` in `.gemini/settings.json`. If your CLAUDE.md came from the scaffold template, do this step together with CLAUDE.md, since the template imports AGENTS.md. Copy `scaffold/AGENTS.md.template` and fill in:
 - Scope + project snapshot
 - First commands and working rules
 - PR/commit requirements

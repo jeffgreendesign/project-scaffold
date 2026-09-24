@@ -11,7 +11,7 @@ These patterns apply regardless of which AI coding tool your team uses (Claude C
 
 | Pattern | Scaffold primitive | Platform delivery | Default? |
 |---------|-------------------|-------------------|----------|
-| **Orchestrator-Subagent** | Plan-first workflow | Claude: `/design` command; Codex/Grok/Gemini: AGENTS.md rule 5 | **Yes — default** |
+| **Orchestrator-Subagent** | Plan-first workflow | Claude: `/design` command; Codex/Grok: AGENTS.md rule 5; Gemini: GEMINI.md working rule | **Yes — default** |
 | **Generator-Verifier** | Quality gate | All platforms: `pnpm verify` / `gates` + `tests/test_architecture.ts` | Yes — always-on |
 | **Shared State** | Session context | All platforms: `NOW.md` | Yes (Tier 2+) |
 | **Agent Teams** | Not provided | Use platform-native parallel agents when needed | No |
@@ -42,7 +42,7 @@ The human approval step (step 3) is the key differentiator from a naive orchestr
 | Claude Code | `/design` slash command | `scaffold/.claude/commands/design.md` |
 | Codex (GPT-6 Astra) | Working rule 5 in AGENTS.md | `scaffold/AGENTS.md.template` |
 | Grok Build (Grok 4.7) | Working rule 5 in AGENTS.md (maps onto Grok Build's Plan Mode) | `scaffold/AGENTS.md.template` |
-| Gemini CLI / Code Assist | Working rule in GEMINI.md + AGENTS.md fallback | `scaffold/GEMINI.md.template` |
+| Gemini CLI / Code Assist | Working rule in GEMINI.md (AGENTS.md too, if `context.fileName` lists it) | `scaffold/GEMINI.md.template` |
 | Cursor | Inherits from CLAUDE.md conventions | `.cursor/rules/` |
 
 ---

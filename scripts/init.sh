@@ -604,7 +604,7 @@ write_file 'AGENTS.md' << 'SCAFFOLD_EOF_AGENTS_MD_TEMPLATE_7f3d9a'
 
 <!-- CUSTOMIZE: This is the shared instruction file for every coding agent. Keep it concise and executable. -->
 <!-- Read by: Codex / GPT-6 Astra (primary, 32 KiB combined limit), Grok Build / Grok 4.7 (alongside CLAUDE.md), -->
-<!-- Gemini CLI (fallback), and Claude Code (via the @AGENTS.md import at the top of CLAUDE.md). -->
+<!-- Claude Code (via the @AGENTS.md import at the top of CLAUDE.md), and Gemini CLI only if context.fileName lists it. -->
 <!-- Put shared rules here and deep architecture in CLAUDE.md. Never state the same fact differently in both: -->
 <!-- Grok Build loads both files, so contradictions reach the model. See docs/FRONTIER-MODELS.md in project-scaffold. -->
 
@@ -2795,5 +2795,5 @@ echo "  5. Run: $PM_RUN gates (verify everything passes)"
 echo ""
 echo "Optional:"
 echo "  - Edit NOW.md if project will last > 2 weeks"
-echo "  - Edit AGENTS.md — shared rules for Codex, Grok Build, Gemini, and Claude Code (via @AGENTS.md import)"
+echo "  - Edit AGENTS.md — shared rules for Codex, Grok Build, and Claude Code (via @AGENTS.md import)"
 echo "  - Delete files you don't need (see docs/DECISION-TREES.md)"

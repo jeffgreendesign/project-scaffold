@@ -760,9 +760,9 @@ describe('Component smoke tests', () => {
 
 **Location:** `scaffold/AGENTS.md.template`
 
-**What it does:** Holds the rules every coding agent shares: scope, startup commands, working rules, definition of done, rules for long-running and unattended work, untrusted-content handling, and PR expectations. It also has an optional API section for external consumers. Codex (GPT-6 Astra) and Grok Build (Grok 4.7) read it directly; `CLAUDE.md` pulls it in for Claude Code with an `@AGENTS.md` import.
+**What it does:** Holds the rules every coding agent shares: scope, startup commands, working rules, definition of done, rules for long-running and unattended work, untrusted-content handling, and PR expectations. It also has an optional API section for external consumers. Codex (GPT-6 Astra) and Grok Build (Grok 4.7) read it directly; `CLAUDE.md` pulls it in for Claude Code with an `@AGENTS.md` import. Gemini CLI reads `GEMINI.md` by default and reads `AGENTS.md` only if you add it to `context.fileName` in `.gemini/settings.json`.
 
-**Why it exists:** AGENTS.md is the one instruction file every current frontier coding agent can reach (see `docs/FRONTIER-MODELS.md`). A strong default improves agent reliability and developer experience from the first turn. Keep the external API section only when needed.
+**Why it exists:** AGENTS.md is the one instruction file Codex, Grok Build, and Claude Code all reach (see `docs/FRONTIER-MODELS.md`). A strong default improves agent reliability and developer experience from the first turn. Keep the external API section only when needed.
 
 **Bug it prevents:** Agents running the wrong commands, missing repo constraints, and producing low-signal PRs without validation context.
 
@@ -1292,7 +1292,7 @@ strategy:
 | `config/version-floors.json` | CVE-based version floor data | 2 |
 | `scripts/doc-sync-check.sh` | Documentation drift detection | 2 |
 | `llms.txt.template` | AI-readable project summary | 3 |
-| `AGENTS.md.template` | Shared rules for all agents (imported by CLAUDE.md) + optional external API guide | 3 |
+| `AGENTS.md.template` | Shared rules for all agents (imported by CLAUDE.md) + optional external API guide | 0 |
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules | 3 |
 | `.claude/rules/typescript.md` | Path-scoped TypeScript rules (Claude Code, Grok Build) | 3 |
 | `.cursor/rules/shell-scripts.mdc` | Cursor IDE rules for shell script conventions and linting | IDE rules |

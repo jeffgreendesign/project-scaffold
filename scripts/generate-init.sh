@@ -211,7 +211,7 @@ echo "  5. Run: $PM_RUN gates (verify everything passes)"
 echo ""
 echo "Optional:"
 echo "  - Edit NOW.md if project will last > 2 weeks"
-echo "  - Edit AGENTS.md — shared rules for Codex, Grok Build, Gemini, and Claude Code (via @AGENTS.md import)"
+echo "  - Edit AGENTS.md — shared rules for Codex, Grok Build, and Claude Code (via @AGENTS.md import)"
 echo "  - Delete files you don't need (see docs/DECISION-TREES.md)"
 FOOTER
 

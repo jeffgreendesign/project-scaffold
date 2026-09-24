@@ -26,12 +26,12 @@ This is the part that matters most for the scaffold. The tools disagree about wh
 | **Claude Code** | Only when no `CLAUDE.md` / `CLAUDE.local.md` exists (v2.1.277+), or via `@AGENTS.md` import | Yes — primary | `.claude/rules/*.md` with `paths:` frontmatter | `.claude/skills/<name>/SKILL.md` (`.claude/commands/*.md` still works) | Target < 200 lines per CLAUDE.md |
 | **Codex (GPT-6 Astra)** | Yes — primary. Root → cwd, one file per directory; `AGENTS.override.md` replaces `AGENTS.md` in its directory | Only if listed in `project_doc_fallback_filenames` and no `AGENTS.md` exists | Nested `AGENTS.md` / `AGENTS.override.md` | `.agents/skills/` (cwd → repo root); catalog capped at 2% of context (`skills.max_context_tokens`) | Stops adding files at 32 KiB combined (`project_doc_max_bytes`) |
 | **Grok Build (Grok 4.7)** | Yes | Yes — `CLAUDE.md`, `CLAUDE.local.md` | `.grok/rules/*.md`, plus `.claude/rules/` and `.cursor/rules/` | `.grok/skills/`, `~/.agents/skills/`; run `grok inspect` to confirm what it picked up | Loads **both** AGENTS.md and CLAUDE.md, root → cwd; deeper files win conflicts; gitignored files skipped |
-| **Gemini CLI** | Fallback | No | — | — | Reads `GEMINI.md` first |
+| **Gemini CLI** | Only if listed in `context.fileName` (`.gemini/settings.json`) | No | — | — | Reads `GEMINI.md` by default |
 | **Cursor** | — | — | `.cursor/rules/*.mdc` with `globs:` | — | |
 
 ### What the scaffold does about it
 
-1. **`AGENTS.md` holds the shared rules** (definition of done, autonomy and stopping rules, untrusted-content handling, plan-first rule). Every tool above reaches it.
+1. **`AGENTS.md` holds the shared rules** (definition of done, autonomy and stopping rules, untrusted-content handling, plan-first rule). Codex, Grok Build, and Claude Code (via the import) reach it. Gemini CLI reads it only if `context.fileName` lists it; otherwise `GEMINI.md` carries the Gemini-specific rules and points to it.
 2. **`CLAUDE.md` imports it with `@AGENTS.md`** on its first line, so Claude Code sees the shared rules even though a `CLAUDE.md` is present. CLAUDE.md then adds architecture, conventions, recipes, and the debug playbook.
 3. **Grok Build loads both files**, so the two must never contradict. Put each fact in exactly one of them. `scripts/doc-sync-check.sh` and code review are the backstop.
 4. **Path-specific rules go in `.claude/rules/`**, which Claude Code and Grok Build both read, and are mirrored in `.cursor/rules/` for Cursor.
