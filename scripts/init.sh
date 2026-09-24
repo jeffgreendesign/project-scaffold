@@ -612,6 +612,8 @@ write_file 'AGENTS.md' << 'SCAFFOLD_EOF_AGENTS_MD_TEMPLATE_7f3d9a'
 
 These instructions apply to the entire repository unless a deeper `AGENTS.md` overrides them.
 
+**Precedence when instructions conflict:** the user's explicit request, then the nearest `AGENTS.md`, then this file, then skills and rule files. If two sources disagree, follow the higher one and mention the conflict in your summary.
+
 ## Project Snapshot
 
 - **What this repo is:** [One sentence]
@@ -634,7 +636,7 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 
 1. Use `rg` for search (not slow recursive grep).
 2. Make minimal, targeted edits. Avoid broad refactors unless requested.
-3. Run `[pnpm gates]` before finishing.
+3. You may run `[pnpm gates]` and the test suite, fix failures caused by your change, and rerun the affected checks without asking.
 4. Update docs when behavior or interfaces change.
 5. For changes touching 3+ files or introducing new patterns, research the codebase and propose an approach before implementing. Wait for approval before writing code. (Orchestrator-Subagent pattern.)
 
@@ -645,7 +647,7 @@ These instructions apply to the entire repository unless a deeper `AGENTS.md` ov
 A task is done only when all of these hold:
 
 1. `[pnpm gates]` passes locally.
-2. New or changed behavior has a test that would fail without the change.
+2. Risky or user-facing behavior changes have a test that would fail without the change. Don't add tests that only mirror the implementation of a reversible, low-impact change.
 3. Docs, `CHANGELOG.md`, and any affected reference tables are updated.
 4. For multi-session work, `NOW.md` reflects what was finished and what is next.
 5. The final summary says what was verified and what was not. Say so plainly when a check was skipped or failed.
@@ -673,8 +675,10 @@ A task is done only when all of these hold:
 
 ## Documentation Map
 
+Read these when the task calls for them, not up front:
+
 - `README.md` — high-level project overview
-- `CLAUDE.md` — deep repo conventions and architecture
+- `CLAUDE.md` — architecture, conventions, and step-by-step recipes (read before adding a new route, component, or migration)
 - `NOW.md` — current sprint status and next actions
 - `docs/` — long-form decisions and implementation guides
 

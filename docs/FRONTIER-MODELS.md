@@ -10,7 +10,7 @@ How the scaffold is tuned for the frontier coding models as of **2026-09-23**, a
 |-------|--------|----------------------|--------|---------|-------------------------|---------------|
 | Claude Opus 5.5 | Anthropic | Claude Code | `claude-opus-5-5` | 1M | low → max (`medium`) | Default for most agentic coding and code review |
 | Claude Fable 5.1 | Anthropic | Claude Code | `claude-fable-5-1` | 1M | low → max (`high`) | Demanding reasoning and long-horizon work, or when Opus 5.5 at higher effort still falls short |
-| GPT-6 Astra | OpenAI | Codex (CLI, IDE, cloud) | `gpt-6-astra` | ~1.05M | `low` / `medium` / `high` / `xhigh` / `max` | Long-running coding, computer use, security work |
+| GPT-6 Astra | OpenAI | Codex (CLI, IDE, cloud) | `gpt-6-astra` | 1.05M (922K in / 128K out) | `low` / `medium` / `high` / `xhigh` / `max` (no `none`) | Long-running coding, computer use, research |
 | Grok 4.7 | xAI (SpaceXAI) | Grok Build CLI | `grok-4.7` | 500K | `low` / `medium` / `high` / `xhigh` (`high`) | Coding and agentic tasks at lower cost ($2 / $6 per MTok) |
 
 Newer siblings are rolling out (Claude Sonnet 5.5 / Haiku 5.5 "in the coming weeks"; GPT-6 Sol and Luna announced 2026-09-22). The guidance below applies to them unless their docs say otherwise.
@@ -24,7 +24,7 @@ This is the part that matters most for the scaffold. The tools disagree about wh
 | Tool | Reads `AGENTS.md` | Reads `CLAUDE.md` | Path-scoped rules | Skills | Notes |
 |------|-------------------|-------------------|-------------------|--------|-------|
 | **Claude Code** | Only when no `CLAUDE.md` / `CLAUDE.local.md` exists (v2.1.277+), or via `@AGENTS.md` import | Yes — primary | `.claude/rules/*.md` with `paths:` frontmatter | `.claude/skills/<name>/SKILL.md` (`.claude/commands/*.md` still works) | Target < 200 lines per CLAUDE.md |
-| **Codex (GPT-6 Astra)** | Yes — primary. Root → cwd, one file per directory, `AGENTS.override.md` wins | Only if listed in `project_doc_fallback_filenames` and no `AGENTS.md` exists | Nested `AGENTS.md` | `.agents/skills/` (cwd → repo root) | Combined size capped at 32 KiB (`project_doc_max_bytes`) |
+| **Codex (GPT-6 Astra)** | Yes — primary. Root → cwd, one file per directory; `AGENTS.override.md` replaces `AGENTS.md` in its directory | Only if listed in `project_doc_fallback_filenames` and no `AGENTS.md` exists | Nested `AGENTS.md` / `AGENTS.override.md` | `.agents/skills/` (cwd → repo root); catalog capped at 2% of context (`skills.max_context_tokens`) | Stops adding files at 32 KiB combined (`project_doc_max_bytes`) |
 | **Grok Build (Grok 4.7)** | Yes | Yes — `CLAUDE.md`, `CLAUDE.local.md` | `.grok/rules/*.md`, plus `.claude/rules/` and `.cursor/rules/` | `.grok/skills/`, `~/.agents/skills/`; run `grok inspect` to confirm what it picked up | Loads **both** AGENTS.md and CLAUDE.md, root → cwd; deeper files win conflicts; gitignored files skipped |
 | **Gemini CLI** | Fallback | No | — | — | Reads `GEMINI.md` first |
 | **Cursor** | — | — | `.cursor/rules/*.mdc` with `globs:` | — | |
@@ -51,9 +51,20 @@ This is the part that matters most for the scaffold. The tools disagree about wh
 
 ### GPT-6 Astra (Codex)
 
-- Recommended `model_reasoning_effort = "high"` for everyday coding. Keep `xhigh` / `max` for architecture and hard debugging.
-- Astra keeps running **context notes** across context windows instead of relying only on compaction. It still helps to write decisions to `NOW.md` / `docs/DECISIONS.md`, because other tools and humans can't see Codex's notes.
-- The system card reports a **decrease in chain-of-thought monitorability**. Don't rely on reading transcripts for safety. Keep destructive-command denials in `.claude/settings.json`, and add an approval hook for shell commands in `~/.codex/config.toml` for sensitive repos (see the Codex configuration notes linked below).
+Settings live in `~/.codex/config.toml`, or in `<repo>/.codex/config.toml` for trusted projects.
+
+- **Effort:** set `model_reasoning_effort`. Astra accepts `low` through `max` but not `none`. If you migrate from `minimal`, start at `low` and compare.
+- **Context:** Codex's experimental context management (`features.context_management.experimental_mode = true`, off by default, requires a ChatGPT Plus/Pro/Pro Lite sign-in) keeps notes and searchable history instead of repeatedly summarizing. Other tools and humans can't see those notes, so still write decisions to `NOW.md` / `docs/DECISIONS.md`. `model_auto_compact_token_limit` tunes when ordinary compaction runs.
+- **Instruction files matter more.** OpenAI says Astra follows instructions more closely and is "more sensitive to instructions contained in skills and other files, such as AGENTS.md". When instruction sources disagree it may pause or follow a rule you didn't expect. The scaffold's changes for this:
+  - `AGENTS.md` states an explicit precedence order (user → nearest AGENTS.md → root → skills/rules).
+  - Doc references are tied to the tasks that need them ("read `CLAUDE.md` before adding a route"), not "read everything before every edit".
+  - The gate loop is granted explicitly: run gates, fix failures your change caused, rerun without asking.
+  - Completion is defined up front (Definition of Done).
+  - No generic "remember to run tests" nudges, which OpenAI says Astra no longer needs. No tests that only mirror the implementation of reversible, low-impact changes.
+- **Bias toward action.** OpenAI notes Astra asks clarifying questions more often than GPT-5.x. The unattended-work rules in `AGENTS.md` name the only valid reasons to stop.
+- **Safety:** the system card rates Astra "Critical" for cybersecurity and reports that its chain-of-thought monitorability has *decreased* relative to GPT-5.6 Sol. Don't rely on reading transcripts. For sensitive repos, enforce with configuration:
+  - Pick an explicit `sandbox_mode` and `approval_policy`. `approval_policy = "untrusted"` is no longer supported; use `on-request` or `granular`.
+  - Add a `PreToolUse` hook with matcher `^Bash$`, in `<repo>/.codex/hooks.json` or `[[hooks.PreToolUse]]` in `.codex/config.toml`, with `features.hooks = true`. It denies destructive commands by returning `"permissionDecision": "deny"`. Project hooks load only when the project's `.codex/` layer is trusted.
 
 ### Grok 4.7 (Grok Build)
 
@@ -82,9 +93,13 @@ This is the part that matters most for the scaffold. The tools disagree about wh
 - Claude Code skills: https://code.claude.com/docs/en/skills
 - GPT-6 Astra announcement: https://openai.com/index/gpt-6-astra/
 - GPT-6 Astra system card: https://deploymentsafety.openai.com/gpt-6-astra
+- GPT-6 Astra model page: https://developers.openai.com/api/docs/models/gpt-6-astra
+- OpenAI model guidance (GPT-6 Astra): https://developers.openai.com/api/docs/guides/latest-model?model=gpt-6-astra
+- Rethinking skills and prompts for GPT-6 Astra: https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra
 - Codex AGENTS.md guide: https://learn.chatgpt.com/docs/agent-configuration/agents-md
+- Codex configuration reference: https://learn.chatgpt.com/docs/config-file/config-reference
+- Codex hooks: https://learn.chatgpt.com/docs/hooks
 - Codex skills: https://developers.openai.com/codex/skills
-- GPT-6 Astra in Codex CLI, configuration notes (community): https://codex.danielvaughan.com/2026/09/03/gpt-6-astra-codex-cli-configuration-context-notes-safety/
 - Grok 4.7 model docs: https://docs.x.ai/developers/grok-4-7
 - Grok Build overview: https://docs.x.ai/build/overview
 - Grok Build AGENTS.md / project rules: https://docs.x.ai/build/features/project-rules
