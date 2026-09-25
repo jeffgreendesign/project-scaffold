@@ -5,6 +5,8 @@
 <!-- This file prevents context loss between sessions. -->
 <!-- Update it at the end of every work session. -->
 <!-- Keep it under 100 lines. If it's longer, you're not updating often enough. -->
+<!-- For long or unattended agent runs, "Current Sprint" doubles as the task checklist: -->
+<!-- agents keep working until it is done or an item is marked blocked with a reason. -->
 
 **Last Updated:** [YYYY-MM-DD]
 **Project Status:** [Brief status — e.g., "MVP in progress", "95% complete"]

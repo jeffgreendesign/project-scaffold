@@ -760,22 +760,23 @@ describe('Component smoke tests', () => {
 
 **Location:** `scaffold/AGENTS.md.template`
 
-**What it does:** Provides execution guidance for Codex/GPT-style agents (scope, startup commands, repo rules, and PR expectations), with an optional API section for external consumers.
+**What it does:** Holds the rules every coding agent shares: scope, startup commands, working rules, definition of done, rules for long-running and unattended work, untrusted-content handling, and PR expectations. It also has an optional API section for external consumers. Codex (GPT-6 Astra) and Grok Build (Grok 4.7) read it directly; `CLAUDE.md` pulls it in for Claude Code with an `@AGENTS.md` import. Gemini CLI reads `GEMINI.md` by default and reads `AGENTS.md` only if you add it to `context.fileName` in `.gemini/settings.json`.
 
-**Why it exists:** Codex-compatible environments prioritize `AGENTS.md` for operating instructions. A strong default improves agent reliability and developer experience from the first turn. Keep the external API section only when needed.
+**Why it exists:** AGENTS.md is the one instruction file Codex, Grok Build, and Claude Code all reach (see `docs/FRONTIER-MODELS.md`). A strong default improves agent reliability and developer experience from the first turn. Keep the external API section only when needed.
 
 **Bug it prevents:** Agents running the wrong commands, missing repo constraints, and producing low-signal PRs without validation context.
 
 **How to customize:**
 
-- Always create this file for Codex/GPT agent compatibility
+- Always create this file. Keep it well under Codex's 32 KiB limit
 - Keep the top sections concise, executable, and repo-specific
 - Keep the API tables only if your project exposes an external API/SDK/tool interface
 
 **Common mistakes:**
 
 - Leaving it generic (agents need concrete commands and constraints)
-- Letting AGENTS.md and CLAUDE.md drift on canonical commands
+- Letting AGENTS.md and CLAUDE.md drift on canonical commands. Grok Build loads both, so contradictions reach the model
+- Duplicating AGENTS.md rules in CLAUDE.md instead of relying on the `@AGENTS.md` import
 - Keeping API sections for projects that do not expose external interfaces
 
 ---
@@ -873,6 +874,29 @@ describe('Component smoke tests', () => {
 - Contradicting CLAUDE.md rules (they must be consistent)
 - Making rules too generic (Cursor rules should be specific to file patterns)
 - Not using the frontmatter globs (rules apply to all files without them)
+
+---
+
+### .claude/rules/typescript.md
+
+**Location:** `scaffold/.claude/rules/typescript.md`
+
+**What it does:** Path-scoped rules for TypeScript files. The `paths:` frontmatter makes Claude Code load the file only when the agent reads matching files. Grok Build also reads `.claude/rules/`.
+
+**Why it exists:** CLAUDE.md should stay under ~200 lines, and every line in it costs context on every task. File-type rules belong in a file that loads only when relevant.
+
+**Bug it prevents:** The same bugs as the Cursor rules, for Claude Code and Grok Build users. It also prevents a CLAUDE.md so long that agents stop following it.
+
+**How to customize:**
+
+- Match `paths:` to your source layout
+- Add one file per topic (`api.md`, `testing.md`, `frontend/react.md`)
+- Keep it in sync with `.cursor/rules/typescript.mdc`
+
+**Common mistakes:**
+
+- Omitting `paths:` (the rule then loads for every task)
+- Letting it drift from the Cursor `.mdc` equivalent
 
 ---
 
@@ -1268,6 +1292,7 @@ strategy:
 | `config/version-floors.json` | CVE-based version floor data | 2 |
 | `scripts/doc-sync-check.sh` | Documentation drift detection | 2 |
 | `llms.txt.template` | AI-readable project summary | 3 |
-| `AGENTS.md.template` | External agent integration guide | 3 |
+| `AGENTS.md.template` | Shared rules for all agents (imported by CLAUDE.md) + optional external API guide | 0 |
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules | 3 |
+| `.claude/rules/typescript.md` | Path-scoped TypeScript rules (Claude Code, Grok Build) | 3 |
 | `.cursor/rules/shell-scripts.mdc` | Cursor IDE rules for shell script conventions and linting | IDE rules |

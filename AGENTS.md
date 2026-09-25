@@ -42,6 +42,7 @@ pnpm verify
 - `docs/ARCHITECTURE.md` — repository and target architecture guidance
 - `docs/DECISIONS.md` — decision log for architectural choices
 - `docs/TROUBLESHOOTING.md` — common failure modes and fixes
+- `docs/FRONTIER-MODELS.md` — current frontier models and which instruction files each agent reads
 
 ## Official References
 

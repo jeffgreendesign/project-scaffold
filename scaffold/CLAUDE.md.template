@@ -1,6 +1,12 @@
 # CLAUDE.md
 
+@AGENTS.md
+
 <!-- CUSTOMIZE: Replace everything in [brackets] with your project values -->
+<!-- The @AGENTS.md import above gives Claude Code the shared rules (definition of done, autonomy, -->
+<!-- untrusted content) that Codex and Grok Build read directly. Keep those rules in AGENTS.md only; -->
+<!-- this file holds architecture, conventions, recipes, and the debug playbook. Remove the import if you delete AGENTS.md. -->
+<!-- Target under 200 lines. Move rules that apply only to some files into .claude/rules/ with a `paths:` frontmatter. -->
 
 ## Project Overview
 

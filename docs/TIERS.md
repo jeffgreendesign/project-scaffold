@@ -6,10 +6,10 @@ Adopt the scaffold incrementally. Each tier builds on the previous one. Start at
 
 | Tier | Time | Files | Value |
 |------|------|-------|-------|
-| 0 | 15 min | CLAUDE.md, settings.json, .env.example, `gates` script | LLM can work autonomously |
+| 0 | 15 min | CLAUDE.md, AGENTS.md, settings.json, .env.example, `gates` script | LLM can work autonomously |
 | 1 | 1 hr | linter, strict types, hooks, CI, .node-version | Mistakes caught before repo |
 | 2 | 2-3 hrs | NOW.md, commands, guardrail tests, changelog, frontmatter, API stability (libraries), workspace boundaries (monorepos) | Sustained multi-session quality |
-| 3 | optional | llms.txt, AGENTS.md, MCP, Cursor rules, decision trees | Multi-agent discoverability and DX |
+| 3 | optional | llms.txt, GEMINI.md, MCP, Cursor rules, decision trees | Multi-agent discoverability and DX |
 
 ---
 
@@ -22,6 +22,7 @@ Adopt the scaffold incrementally. Each tier builds on the previous one. Start at
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | Project context for LLM agents — commands, architecture, conventions |
+| `AGENTS.md` | Shared agent rules; the CLAUDE.md template imports it with `@AGENTS.md`, so copy both |
 | `.claude/settings.json` | Pre-approved safe commands, blocked destructive operations |
 | `.env.example` | Document every environment variable with examples |
 | `package.json` `"gates"` script | Single command that runs all quality checks |
@@ -151,9 +152,9 @@ Tier 2 is about sustained quality across multiple sessions. NOW.md prevents cont
 | File | Purpose |
 |------|---------|
 | `llms.txt` | AI-readable project summary for external agents |
-| `AGENTS.md` | Codex/GPT agent instructions (+ optional external API guide) |
 | `GEMINI.md` | Gemini CLI / Code Assist context file |
 | `.cursor/rules/typescript.mdc` | Cursor IDE rules for TypeScript conventions |
+| `.claude/rules/typescript.md` | Path-scoped TypeScript rules for Claude Code and Grok Build |
 | Decision trees in docs | Flowcharts for common architectural choices |
 
 ### Why This Tier Is Optional
@@ -168,7 +169,7 @@ Tier 3 is for projects that are consumed by external agents or used in multi-age
 
 ### When to Implement
 
-- Always create AGENTS.md for Codex/GPT execution guidance
+- Keep AGENTS.md's optional external API section only if your project exposes an API/SDK/tool (AGENTS.md itself is Tier 0)
 - Team uses Gemini CLI or Gemini Code Assist → create GEMINI.md
 - Project is an open-source library → create llms.txt
 - Team uses Cursor → create .cursor/rules/
